@@ -1,4 +1,4 @@
-import { eq, gt, isNull, or } from 'drizzle-orm';
+import { and, eq, gt, isNull, or } from 'drizzle-orm';
 
 import { db } from '@/src/db/client';
 import { sqliteNow } from '@/src/db/queries/menu';
@@ -386,6 +386,120 @@ async function pushOrders(): Promise<void> {
   }
 }
 
+async function pullOrders(): Promise<void> {
+  const { lastPulledOrdersAt } = useSyncSettingsStore.getState();
+  const query = lastPulledOrdersAt ? `?since=${encodeURIComponent(lastPulledOrdersAt)}` : '';
+  const { data, serverTime } = await apiFetch(`/orders${query}`);
+
+  for (const o of data.orders) {
+    const [existingByRemote] = await db.select().from(orders).where(eq(orders.remoteId, o.id));
+    if (existingByRemote) continue;
+
+    // Order kita sendiri yg push-nya sukses tapi belum sempat ke-tandai remoteId lokal
+    // (mis. response kepotong) - backfill aja, jangan insert baris baru (orderNumber unique).
+    const [existingByNumber] = await db.select().from(orders).where(eq(orders.orderNumber, o.orderNumber));
+    if (existingByNumber) {
+      await db
+        .update(orders)
+        .set({ remoteId: o.id, syncedAt: sqliteNow() })
+        .where(eq(orders.id, existingByNumber.id));
+      continue;
+    }
+
+    const [newOrder] = await db
+      .insert(orders)
+      .values({
+        orderNumber: o.orderNumber,
+        status: o.status,
+        customerName: o.customerName,
+        subtotal: o.subtotal,
+        total: o.total,
+        paymentMethod: o.paymentMethod,
+        note: o.note,
+        createdAt: isoToSqlite(o.createdAt),
+        remoteId: o.id,
+        syncedAt: sqliteNow(),
+      })
+      .returning();
+
+    for (const i of o.items ?? []) {
+      let productId: number | null = null;
+      if (i.productRemoteId) {
+        const [product] = await db.select().from(products).where(eq(products.remoteId, i.productRemoteId));
+        productId = product?.id ?? null;
+      }
+
+      const [newItem] = await db
+        .insert(orderItems)
+        .values({
+          orderId: newOrder.id,
+          productId,
+          productName: i.productName,
+          unitPrice: i.unitPrice,
+          costPrice: i.costPrice,
+          qty: i.qty,
+          note: i.note,
+          printed: i.printed ?? false,
+          createdAt: isoToSqlite(i.createdAt),
+        })
+        .returning();
+
+      for (const m of i.modifiers ?? []) {
+        await db.insert(orderItemModifiers).values({
+          orderItemId: newItem.id,
+          modifierGroupName: m.modifierGroupName,
+          modifierOptionName: m.modifierOptionName,
+          priceDelta: m.priceDelta,
+        });
+      }
+    }
+  }
+
+  useSyncSettingsStore.getState().setLastPulledOrdersAt(serverTime);
+}
+
+async function pullExpenses(): Promise<void> {
+  const { lastPulledExpensesAt } = useSyncSettingsStore.getState();
+  const query = lastPulledExpensesAt ? `?since=${encodeURIComponent(lastPulledExpensesAt)}` : '';
+  const { data, serverTime } = await apiFetch(`/expenses${query}`);
+
+  for (const e of data.expenses) {
+    const [existingByRemote] = await db.select().from(expenses).where(eq(expenses.remoteId, e.id));
+    if (existingByRemote) continue;
+
+    // Belanja kita sendiri yg push-nya sukses tapi belum sempat ke-tandai remoteId lokal -
+    // expenses gak punya kolom unik, jadi dicek dari isi datanya biar gak duplikat.
+    const createdAtSqlite = isoToSqlite(e.createdAt);
+    const [existingByContent] = await db
+      .select()
+      .from(expenses)
+      .where(
+        and(
+          eq(expenses.description, e.description),
+          eq(expenses.amount, e.amount),
+          eq(expenses.createdAt, createdAtSqlite)
+        )
+      );
+    if (existingByContent) {
+      await db
+        .update(expenses)
+        .set({ remoteId: e.id, syncedAt: sqliteNow() })
+        .where(eq(expenses.id, existingByContent.id));
+      continue;
+    }
+
+    await db.insert(expenses).values({
+      description: e.description,
+      amount: e.amount,
+      createdAt: createdAtSqlite,
+      remoteId: e.id,
+      syncedAt: sqliteNow(),
+    });
+  }
+
+  useSyncSettingsStore.getState().setLastPulledExpensesAt(serverTime);
+}
+
 async function pushExpenses(): Promise<void> {
   const dirty = await db.select().from(expenses).where(isNull(expenses.remoteId));
   if (dirty.length === 0) return;
@@ -419,6 +533,8 @@ async function syncAll(): Promise<void> {
   await pushExpenses();
   await pushSettings();
   await pullMenu();
+  await pullOrders();
+  await pullExpenses();
   useSyncSettingsStore.getState().setLastSyncedAt(new Date().toISOString());
 }
 
@@ -429,4 +545,6 @@ export const SyncService = {
   pushOrders,
   pushExpenses,
   pushSettings,
+  pullOrders,
+  pullExpenses,
 };

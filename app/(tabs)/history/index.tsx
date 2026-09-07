@@ -4,6 +4,9 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getOrders, type OrderRow } from '@/src/db/queries/orders';
+import { SyncService } from '@/src/sync/SyncService';
+
+const POLL_INTERVAL_MS = 20000;
 
 function formatDateTime(isoLike: string): string {
   const date = new Date(isoLike.replace(' ', 'T') + 'Z');
@@ -21,6 +24,10 @@ export default function HistoryScreen() {
   useFocusEffect(
     useCallback(() => {
       load();
+      const interval = setInterval(() => {
+        SyncService.pullOrders().then(load).catch(() => {});
+      }, POLL_INTERVAL_MS);
+      return () => clearInterval(interval);
     }, [load])
   );
 

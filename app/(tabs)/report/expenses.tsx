@@ -4,6 +4,9 @@ import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { deleteExpense, getExpenses, type ExpenseRow } from '@/src/db/queries/expenses';
+import { SyncService } from '@/src/sync/SyncService';
+
+const POLL_INTERVAL_MS = 20000;
 
 function formatDateTime(isoLike: string): string {
   const date = new Date(isoLike.replace(' ', 'T') + 'Z');
@@ -21,11 +24,18 @@ export default function ExpensesScreen() {
   useFocusEffect(
     useCallback(() => {
       load();
+      const interval = setInterval(() => {
+        SyncService.pullExpenses().then(load).catch(() => {});
+      }, POLL_INTERVAL_MS);
+      return () => clearInterval(interval);
     }, [load])
   );
 
   const handleDelete = (expense: ExpenseRow) => {
-    Alert.alert('Hapus Belanja', `Yakin hapus "${expense.description}"?`, [
+    const message = expense.remoteId
+      ? `"${expense.description}" sudah tersinkron ke server. Hapus di HP ini TIDAK menghapusnya dari server/HP lain. Lanjut?`
+      : `Yakin hapus "${expense.description}"?`;
+    Alert.alert('Hapus Belanja', message, [
       { text: 'Batal', style: 'cancel' },
       {
         text: 'Hapus',

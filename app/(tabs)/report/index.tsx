@@ -5,8 +5,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getRevenueSummary, type RevenueSummary } from '@/src/db/queries/reports';
 import { useCapitalStore } from '@/src/store/capitalStore';
+import { SyncService } from '@/src/sync/SyncService';
 
 const CHART_HEIGHT = 140;
+const POLL_INTERVAL_MS = 20000;
 
 function formatRupiah(value: number): string {
   return `Rp${value.toLocaleString('id-ID')}`;
@@ -26,6 +28,12 @@ export default function ReportScreen() {
   useFocusEffect(
     useCallback(() => {
       load();
+      const interval = setInterval(() => {
+        Promise.all([SyncService.pullOrders(), SyncService.pullExpenses()])
+          .then(load)
+          .catch(() => {});
+      }, POLL_INTERVAL_MS);
+      return () => clearInterval(interval);
     }, [load])
   );
 
