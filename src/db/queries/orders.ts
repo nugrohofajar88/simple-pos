@@ -4,6 +4,7 @@ import { db } from '@/src/db/client';
 import { orderItemModifiers, orderItems, orders } from '@/src/db/schema';
 import type { CartItem } from '@/src/store/cartStore';
 import { cartSubtotal } from '@/src/store/cartStore';
+import { useDeviceStore } from '@/src/store/deviceStore';
 
 export type OrderRow = typeof orders.$inferSelect;
 export type OrderItemRow = typeof orderItems.$inferSelect;
@@ -19,7 +20,8 @@ function todayDateKey(): string {
 
 async function generateOrderNumber(): Promise<string> {
   const dateKey = todayDateKey();
-  const prefix = `ORD-${dateKey}-`;
+  const deviceCode = useDeviceStore.getState().deviceCode;
+  const prefix = `ORD-${dateKey}-${deviceCode}-`;
   const todayOrders = await db.select().from(orders).where(like(orders.orderNumber, `${prefix}%`));
   const sequence = String(todayOrders.length + 1).padStart(3, '0');
   return `${prefix}${sequence}`;

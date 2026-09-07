@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { SyncService } from '@/src/sync/SyncService';
 import { useSyncSettingsStore } from '@/src/sync/syncSettingsStore';
+import { useDeviceStore } from '@/src/store/deviceStore';
 
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
@@ -15,6 +16,7 @@ export default function SyncSettingsScreen() {
   const apiToken = useSyncSettingsStore((state) => state.apiToken);
   const lastSyncedAt = useSyncSettingsStore((state) => state.lastSyncedAt);
   const setCredentials = useSyncSettingsStore((state) => state.setCredentials);
+  const deviceCode = useDeviceStore((state) => state.deviceCode);
 
   const [draftUrl, setDraftUrl] = useState(apiBaseUrl);
   const [draftToken, setDraftToken] = useState(apiToken);
@@ -47,6 +49,7 @@ export default function SyncSettingsScreen() {
       <Text style={styles.hint}>
         Isi URL back-office & token dari halaman Settings di web (Generate Token), lalu Sync Sekarang.
       </Text>
+      <Text style={styles.hint}>Kode device ini: {deviceCode} (dipakai di nomor order, beda tiap HP)</Text>
 
       <Text style={styles.label}>URL Back-Office</Text>
       <AppTextInput
