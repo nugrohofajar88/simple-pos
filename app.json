@@ -28,6 +28,13 @@
       "expo-status-bar",
       "expo-sqlite",
       "./plugins/withBluetoothPermissions.js"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "39512c53-dd69-4254-9264-ecb28d965d08"
+      }
+    },
+    "owner": "fajr000"
   }
 }
