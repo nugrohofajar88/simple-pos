@@ -1,0 +1,124 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { AppTextInput } from '@/src/components/AppTextInput';
+import { CurrencyInput } from '@/src/components/CurrencyInput';
+import { createProduct, getCategories, type CategoryRow } from '@/src/db/queries/menu';
+
+export default function NewProductScreen() {
+  const router = useRouter();
+  const { categoryId: initialCategoryId } = useLocalSearchParams<{ categoryId?: string }>();
+
+  const [categories, setCategories] = useState<CategoryRow[]>([]);
+  const [categoryId, setCategoryId] = useState<number | null>(
+    initialCategoryId ? Number(initialCategoryId) : null
+  );
+  const [name, setName] = useState('');
+  const [basePrice, setBasePrice] = useState('');
+  const [costPrice, setCostPrice] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const rows = await getCategories();
+      setCategories(rows);
+      if (categoryId === null && rows.length > 0) setCategoryId(rows[0].id);
+    })();
+  }, []);
+
+  const handleSave = async () => {
+    const price = Number(basePrice);
+    const cost = costPrice ? Number(costPrice) : 0;
+    if (!name.trim()) {
+      Alert.alert('Nama kosong', 'Nama produk harus diisi.');
+      return;
+    }
+    if (!categoryId) {
+      Alert.alert('Kategori belum dipilih', 'Pilih kategori dulu.');
+      return;
+    }
+    if (!basePrice || Number.isNaN(price) || price < 0) {
+      Alert.alert('Harga tidak valid', 'Masukkan harga dasar yang benar.');
+      return;
+    }
+    if (Number.isNaN(cost) || cost < 0) {
+      Alert.alert('HPP tidak valid', 'Masukkan HPP yang benar, atau kosongkan.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await createProduct({ categoryId, name: name.trim(), basePrice: price, costPrice: cost });
+      router.back();
+    } catch (error) {
+      Alert.alert('Gagal simpan', String(error));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.label}>Kategori</Text>
+      {categories.length === 0 ? (
+        <Text style={styles.emptyHint}>Belum ada kategori. Tambah dulu di tab Menu.</Text>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.chipRow}
+          contentContainerStyle={styles.chipRowContent}
+        >
+          {categories.map((category) => (
+            <Pressable
+              key={category.id}
+              style={[styles.chip, categoryId === category.id && styles.chipActive]}
+              onPress={() => setCategoryId(category.id)}
+            >
+              <Text style={[styles.chipText, categoryId === category.id && styles.chipTextActive]}>
+                {category.name}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
+
+      <Text style={styles.label}>Nama Produk</Text>
+      <AppTextInput style={styles.input} value={name} onChangeText={setName} placeholder="mis. Cafe Latte" />
+
+      <Text style={styles.label}>Harga Dasar</Text>
+      <CurrencyInput style={styles.input} value={basePrice} onChangeText={setBasePrice} placeholder="mis. 22.000" />
+
+      <Text style={styles.label}>HPP / Harga Pokok (opsional)</Text>
+      <CurrencyInput style={styles.input} value={costPrice} onChangeText={setCostPrice} placeholder="mis. 12.000" />
+
+      <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
+        <Text style={styles.saveButtonText}>{saving ? 'Menyimpan...' : 'Simpan'}</Text>
+      </Pressable>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, gap: 8 },
+  label: { fontSize: 14, fontWeight: '600', color: '#333', marginTop: 8 },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16 },
+  chipRow: { flexGrow: 0 },
+  chipRowContent: { flexDirection: 'row', alignItems: 'center' },
+  chip: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginRight: 8,
+    alignSelf: 'flex-start',
+  },
+  chipActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
+  chipText: { color: '#333' },
+  chipTextActive: { color: '#fff', fontWeight: '600' },
+  emptyHint: { color: '#888', fontSize: 13, marginBottom: 4 },
+  saveButton: { backgroundColor: '#2563eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 16 },
+  saveButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+});
