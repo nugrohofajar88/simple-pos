@@ -6,6 +6,12 @@ export const categories = sqliteTable('categories', {
   name: text('name').notNull(),
   sortOrder: integer('sort_order').notNull().default(0),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  remoteId: integer('remote_id'),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(current_timestamp)`),
+  deletedAt: text('deleted_at'),
+  syncedAt: text('synced_at'),
 });
 
 export const products = sqliteTable('products', {
@@ -18,6 +24,12 @@ export const products = sqliteTable('products', {
   costPrice: real('cost_price').notNull().default(0),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
   sortOrder: integer('sort_order').notNull().default(0),
+  remoteId: integer('remote_id'),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(current_timestamp)`),
+  deletedAt: text('deleted_at'),
+  syncedAt: text('synced_at'),
 });
 
 export const modifierGroups = sqliteTable('modifier_groups', {
@@ -29,6 +41,12 @@ export const modifierGroups = sqliteTable('modifier_groups', {
   selectionType: text('selection_type', { enum: ['single', 'multiple'] }).notNull(),
   isRequired: integer('is_required', { mode: 'boolean' }).notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
+  remoteId: integer('remote_id'),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(current_timestamp)`),
+  deletedAt: text('deleted_at'),
+  syncedAt: text('synced_at'),
 });
 
 export const modifierOptions = sqliteTable('modifier_options', {
@@ -40,6 +58,12 @@ export const modifierOptions = sqliteTable('modifier_options', {
   priceDelta: real('price_delta').notNull().default(0),
   isDefault: integer('is_default', { mode: 'boolean' }).notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
+  remoteId: integer('remote_id'),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(current_timestamp)`),
+  deletedAt: text('deleted_at'),
+  syncedAt: text('synced_at'),
 });
 
 export const orders = sqliteTable('orders', {
@@ -54,6 +78,8 @@ export const orders = sqliteTable('orders', {
   createdAt: text('created_at')
     .notNull()
     .default(sql`(current_timestamp)`),
+  remoteId: integer('remote_id'),
+  syncedAt: text('synced_at'),
 });
 
 export const orderItems = sqliteTable('order_items', {
@@ -71,6 +97,8 @@ export const orderItems = sqliteTable('order_items', {
   createdAt: text('created_at')
     .notNull()
     .default(sql`(current_timestamp)`),
+  remoteId: integer('remote_id'),
+  syncedAt: text('synced_at'),
 });
 
 export const orderItemModifiers = sqliteTable('order_item_modifiers', {
@@ -90,6 +118,8 @@ export const expenses = sqliteTable('expenses', {
   createdAt: text('created_at')
     .notNull()
     .default(sql`(current_timestamp)`),
+  remoteId: integer('remote_id'),
+  syncedAt: text('synced_at'),
 });
 
 export const categoriesRelations = relations(categories, ({ many }) => ({

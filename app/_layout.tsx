@@ -8,6 +8,7 @@ import { db } from '@/src/db/client';
 import migrations from '@/src/db/migrations/migrations';
 import { seedIfEmpty } from '@/src/db/seed';
 import { useSeedStore } from '@/src/store/seedStore';
+import { SyncService } from '@/src/sync/SyncService';
 
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
@@ -15,6 +16,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (success && !useSeedStore.getState().hasSeeded) {
       seedIfEmpty(db).then(() => useSeedStore.getState().setHasSeeded(true));
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (success) {
+      SyncService.syncAll().catch(() => {});
     }
   }, [success]);
 

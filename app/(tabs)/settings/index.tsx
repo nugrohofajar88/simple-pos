@@ -78,6 +78,12 @@ export default function SettingsScreen() {
         </Pressable>
       </Link>
 
+      <Link href="/settings/sync" asChild>
+        <Pressable style={styles.item}>
+          <Text style={styles.itemText}>Sinkronisasi Back-Office</Text>
+        </Pressable>
+      </Link>
+
       <View style={styles.dangerSection}>
         <Text style={styles.dangerTitle}>Zona Berbahaya</Text>
         <Pressable style={styles.resetButton} onPress={handleResetPress} disabled={resetting}>

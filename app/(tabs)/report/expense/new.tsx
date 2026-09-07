@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
 import { createExpense } from '@/src/db/queries/expenses';
+import { SyncService } from '@/src/sync/SyncService';
 
 export default function NewExpenseScreen() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function NewExpenseScreen() {
     setSaving(true);
     try {
       await createExpense({ description: description.trim(), amount: value });
+      SyncService.pushExpenses().catch(() => {});
       router.back();
     } catch (error) {
       Alert.alert('Gagal simpan', String(error));

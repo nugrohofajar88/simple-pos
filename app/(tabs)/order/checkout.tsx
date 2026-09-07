@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { createOrder } from '@/src/db/queries/orders';
 import { cartSubtotal, useCartStore } from '@/src/store/cartStore';
+import { SyncService } from '@/src/sync/SyncService';
 
 const PAYMENT_METHODS = ['Cash', 'QRIS', 'Debit'] as const;
 
@@ -30,6 +31,7 @@ export default function CheckoutScreen() {
     try {
       const order = await createOrder({ items, paymentMethod, customerName, note });
       clear();
+      SyncService.pushOrders().catch(() => {});
       Alert.alert('Order Tersimpan', `No. Order: ${order.orderNumber}`, [
         { text: 'OK', onPress: () => router.push('/order') },
       ]);
