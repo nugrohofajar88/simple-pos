@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { fetchMenu } from '@/src/api/menuApi';
 import { getAllProducts, getCategories, type CategoryRow, type ProductRow } from '@/src/db/queries/menu';
 import { useCartStore } from '@/src/store/cartStore';
 
@@ -12,8 +13,9 @@ export default function OrderScreen() {
   const router = useRouter();
   const cartCount = useCartStore((state) => state.items.reduce((sum, item) => sum + item.qty, 0));
   const [data, setData] = useState<CategoryWithProducts[]>([]);
+  const [offline, setOffline] = useState(false);
 
-  const load = useCallback(async () => {
+  const loadFromCache = useCallback(async () => {
     const [allCategories, allProducts] = await Promise.all([getCategories(), getAllProducts()]);
     setData(
       allCategories
@@ -27,8 +29,11 @@ export default function OrderScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      load();
-    }, [load])
+      fetchMenu()
+        .then(() => setOffline(false))
+        .catch(() => setOffline(true))
+        .finally(loadFromCache);
+    }, [loadFromCache])
   );
 
   return (
@@ -39,6 +44,8 @@ export default function OrderScreen() {
           <Text style={styles.cartButtonText}>Keranjang{cartCount > 0 ? ` (${cartCount})` : ''}</Text>
         </Pressable>
       </View>
+
+      {offline && <Text style={styles.offlineNotice}>Gak ada koneksi - menu terakhir yg tersimpan, order tetap bisa disimpan.</Text>}
 
       <FlatList
         data={data}
@@ -75,6 +82,14 @@ const styles = StyleSheet.create({
   cartButton: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
   cartButtonText: { color: '#fff', fontWeight: '600' },
   empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  offlineNotice: {
+    fontSize: 12,
+    color: '#92400e',
+    backgroundColor: '#fef3c7',
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
   categoryBlock: { marginBottom: 20 },
   categoryName: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

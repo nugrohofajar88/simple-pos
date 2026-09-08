@@ -3,13 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { createModifierGroup, createModifierOption, deleteModifierGroup, deleteModifierOption } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
 import {
-  createModifierGroup,
-  createModifierOption,
-  deleteModifierGroup,
-  deleteModifierOption,
   getModifierGroupsWithOptions,
   getProduct,
   type ModifierGroupRow,
@@ -48,16 +45,20 @@ export default function ProductModifiersScreen() {
       Alert.alert('Nama kosong', 'Nama grup modifier harus diisi (mis. Size, Suhu, Level Gula).');
       return;
     }
-    await createModifierGroup({
-      productId,
-      name: newGroupName.trim(),
-      selectionType: newGroupMultiple ? 'multiple' : 'single',
-      isRequired: newGroupRequired,
-    });
-    setNewGroupName('');
-    setNewGroupMultiple(false);
-    setNewGroupRequired(false);
-    load();
+    try {
+      await createModifierGroup({
+        productId,
+        name: newGroupName.trim(),
+        selectionType: newGroupMultiple ? 'multiple' : 'single',
+        isRequired: newGroupRequired,
+      });
+      setNewGroupName('');
+      setNewGroupMultiple(false);
+      setNewGroupRequired(false);
+      load();
+    } catch (error) {
+      Alert.alert('Gagal simpan', String((error as Error).message ?? error));
+    }
   };
 
   const handleDeleteGroup = (group: GroupWithOptions) => {
@@ -67,8 +68,12 @@ export default function ProductModifiersScreen() {
         text: 'Hapus',
         style: 'destructive',
         onPress: async () => {
-          await deleteModifierGroup(group.id);
-          load();
+          try {
+            await deleteModifierGroup(group.id);
+            load();
+          } catch (error) {
+            Alert.alert('Gagal hapus', String((error as Error).message ?? error));
+          }
         },
       },
     ]);
@@ -85,9 +90,13 @@ export default function ProductModifiersScreen() {
       Alert.alert('Harga tambahan tidak valid', 'Isi angka, boleh 0.');
       return;
     }
-    await createModifierOption({ modifierGroupId: groupId, name: form.name.trim(), priceDelta, isDefault: false });
-    setOptionForms((prev) => ({ ...prev, [groupId]: { name: '', priceDelta: '' } }));
-    load();
+    try {
+      await createModifierOption({ modifierGroupId: groupId, name: form.name.trim(), priceDelta, isDefault: false });
+      setOptionForms((prev) => ({ ...prev, [groupId]: { name: '', priceDelta: '' } }));
+      load();
+    } catch (error) {
+      Alert.alert('Gagal simpan', String((error as Error).message ?? error));
+    }
   };
 
   const handleDeleteOption = (option: ModifierOptionRow) => {
@@ -97,8 +106,12 @@ export default function ProductModifiersScreen() {
         text: 'Hapus',
         style: 'destructive',
         onPress: async () => {
-          await deleteModifierOption(option.id);
-          load();
+          try {
+            await deleteModifierOption(option.id);
+            load();
+          } catch (error) {
+            Alert.alert('Gagal hapus', String((error as Error).message ?? error));
+          }
         },
       },
     ]);

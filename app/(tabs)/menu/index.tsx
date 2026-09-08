@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { fetchMenu } from '@/src/api/menuApi';
 import { getAllProducts, getCategories, type CategoryRow, type ProductRow } from '@/src/db/queries/menu';
 
 type CategoryWithProducts = CategoryRow & { products: ProductRow[] };
@@ -10,8 +11,9 @@ type CategoryWithProducts = CategoryRow & { products: ProductRow[] };
 export default function MenuScreen() {
   const router = useRouter();
   const [data, setData] = useState<CategoryWithProducts[]>([]);
+  const [offline, setOffline] = useState(false);
 
-  const load = useCallback(async () => {
+  const loadFromCache = useCallback(async () => {
     const [allCategories, allProducts] = await Promise.all([getCategories(), getAllProducts()]);
     setData(
       allCategories.map((category) => ({
@@ -23,8 +25,11 @@ export default function MenuScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      load();
-    }, [load])
+      fetchMenu()
+        .then(() => setOffline(false))
+        .catch(() => setOffline(true))
+        .finally(loadFromCache);
+    }, [loadFromCache])
   );
 
   return (
@@ -35,6 +40,12 @@ export default function MenuScreen() {
           <Text style={styles.addButtonText}>+ Kategori</Text>
         </Pressable>
       </View>
+
+      {offline && (
+        <Text style={styles.offlineNotice}>
+          Gak ada koneksi - nampilin data terakhir yg tersimpan, edit menu butuh internet.
+        </Text>
+      )}
 
       <FlatList
         data={data}
@@ -86,6 +97,14 @@ const styles = StyleSheet.create({
   addButton: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
   addButtonText: { color: '#fff', fontWeight: '600' },
   empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  offlineNotice: {
+    fontSize: 12,
+    color: '#92400e',
+    backgroundColor: '#fef3c7',
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
   listContent: { paddingBottom: 24 },
   categoryCard: {
     backgroundColor: '#fff',

@@ -3,12 +3,11 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { fetchSummary } from '@/src/api/reportApi';
 import { getRevenueSummary, type RevenueSummary } from '@/src/db/queries/reports';
 import { useCapitalStore } from '@/src/store/capitalStore';
-import { SyncService } from '@/src/sync/SyncService';
 
 const CHART_HEIGHT = 140;
-const POLL_INTERVAL_MS = 20000;
 
 function formatRupiah(value: number): string {
   return `Rp${value.toLocaleString('id-ID')}`;
@@ -19,21 +18,23 @@ export default function ReportScreen() {
   const initialCapital = useCapitalStore((state) => state.initialCapital);
   const [summary, setSummary] = useState<RevenueSummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [offline, setOffline] = useState(false);
 
   const load = useCallback(async () => {
-    setSummary(await getRevenueSummary());
+    try {
+      setSummary(await fetchSummary());
+      setOffline(false);
+    } catch {
+      // Gak ada koneksi - fallback ke agregat lokal (order/belanja bikinan HP ini aja).
+      setSummary(await getRevenueSummary());
+      setOffline(true);
+    }
     setLoading(false);
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       load();
-      const interval = setInterval(() => {
-        Promise.all([SyncService.pullOrders(), SyncService.pullExpenses()])
-          .then(load)
-          .catch(() => {});
-      }, POLL_INTERVAL_MS);
-      return () => clearInterval(interval);
     }, [load])
   );
 
@@ -51,6 +52,12 @@ export default function ReportScreen() {
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Laporan</Text>
+
+        {offline && (
+          <Text style={styles.offlineNotice}>
+            Gak ada koneksi - nampilin data HP ini aja, bisa beda dgn rekap gabungan di web.
+          </Text>
+        )}
 
         <Pressable style={styles.capitalCard} onPress={() => router.push('/report/capital')}>
           <View>
@@ -113,6 +120,14 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   content: { padding: 16, paddingBottom: 32 },
   title: { fontSize: 20, fontWeight: '600', marginBottom: 16 },
+  offlineNotice: {
+    fontSize: 12,
+    color: '#92400e',
+    backgroundColor: '#fef3c7',
+    padding: 8,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
   capitalCard: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,21 +1,18 @@
 import { relations, sql } from 'drizzle-orm';
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
+// Cache read-only hasil GET /api/menu - id = id server LANGSUNG (bukan autoincrement lokal),
+// gak ada remoteId/updatedAt/deletedAt/syncedAt lagi krn server satu-satunya sumber kebenaran.
+// Diisi ulang total (delete-all lalu insert) tiap kali fetchMenu() sukses - lihat src/api/menuApi.ts.
 export const categories = sqliteTable('categories', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id').primaryKey(),
   name: text('name').notNull(),
   sortOrder: integer('sort_order').notNull().default(0),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
-  remoteId: integer('remote_id'),
-  updatedAt: text('updated_at')
-    .notNull()
-    .default(sql`(current_timestamp)`),
-  deletedAt: text('deleted_at'),
-  syncedAt: text('synced_at'),
 });
 
 export const products = sqliteTable('products', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id').primaryKey(),
   categoryId: integer('category_id')
     .notNull()
     .references(() => categories.id),
@@ -24,16 +21,10 @@ export const products = sqliteTable('products', {
   costPrice: real('cost_price').notNull().default(0),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
   sortOrder: integer('sort_order').notNull().default(0),
-  remoteId: integer('remote_id'),
-  updatedAt: text('updated_at')
-    .notNull()
-    .default(sql`(current_timestamp)`),
-  deletedAt: text('deleted_at'),
-  syncedAt: text('synced_at'),
 });
 
 export const modifierGroups = sqliteTable('modifier_groups', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id').primaryKey(),
   productId: integer('product_id')
     .notNull()
     .references(() => products.id),
@@ -41,16 +32,10 @@ export const modifierGroups = sqliteTable('modifier_groups', {
   selectionType: text('selection_type', { enum: ['single', 'multiple'] }).notNull(),
   isRequired: integer('is_required', { mode: 'boolean' }).notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
-  remoteId: integer('remote_id'),
-  updatedAt: text('updated_at')
-    .notNull()
-    .default(sql`(current_timestamp)`),
-  deletedAt: text('deleted_at'),
-  syncedAt: text('synced_at'),
 });
 
 export const modifierOptions = sqliteTable('modifier_options', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: integer('id').primaryKey(),
   modifierGroupId: integer('modifier_group_id')
     .notNull()
     .references(() => modifierGroups.id),
@@ -58,12 +43,6 @@ export const modifierOptions = sqliteTable('modifier_options', {
   priceDelta: real('price_delta').notNull().default(0),
   isDefault: integer('is_default', { mode: 'boolean' }).notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
-  remoteId: integer('remote_id'),
-  updatedAt: text('updated_at')
-    .notNull()
-    .default(sql`(current_timestamp)`),
-  deletedAt: text('deleted_at'),
-  syncedAt: text('synced_at'),
 });
 
 export const orders = sqliteTable('orders', {

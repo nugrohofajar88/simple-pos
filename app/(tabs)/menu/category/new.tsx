@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { createCategory } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
-import { createCategory } from '@/src/db/queries/menu';
 
 export default function NewCategoryScreen() {
   const router = useRouter();

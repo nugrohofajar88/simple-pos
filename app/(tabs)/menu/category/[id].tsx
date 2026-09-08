@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { deleteCategory, updateCategory } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
-import { deleteCategory, getCategory, updateCategory } from '@/src/db/queries/menu';
+import { getCategory } from '@/src/db/queries/menu';
 
 export default function CategoryEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

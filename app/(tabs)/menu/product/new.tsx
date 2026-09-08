@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { createProduct } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
-import { createProduct, getCategories, type CategoryRow } from '@/src/db/queries/menu';
+import { getCategories, type CategoryRow } from '@/src/db/queries/menu';
 
 export default function NewProductScreen() {
   const router = useRouter();

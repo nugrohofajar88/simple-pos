@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { deleteProduct, updateProduct } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
-import { deleteProduct, getCategories, getProduct, updateProduct, type CategoryRow } from '@/src/db/queries/menu';
+import { getCategories, getProduct, type CategoryRow } from '@/src/db/queries/menu';
 
 export default function EditProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -74,8 +75,12 @@ export default function EditProductScreen() {
         text: 'Hapus',
         style: 'destructive',
         onPress: async () => {
-          await deleteProduct(productId);
-          router.back();
+          try {
+            await deleteProduct(productId);
+            router.back();
+          } catch (error) {
+            Alert.alert('Gagal hapus', String((error as Error).message ?? error));
+          }
         },
       },
     ]);
