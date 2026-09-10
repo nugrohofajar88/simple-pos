@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 
 import { db } from '@/src/db/client';
 import { expenses, orders } from '@/src/db/schema';
@@ -30,7 +30,7 @@ export type RevenueSummary = {
 
 export async function getRevenueSummary(): Promise<RevenueSummary> {
   const [completedOrders, allExpenses] = await Promise.all([
-    db.select().from(orders).where(eq(orders.status, 'completed')),
+    db.select().from(orders).where(and(eq(orders.status, 'completed'), isNull(orders.deletedAt))),
     db.select().from(expenses),
   ]);
   const now = new Date();

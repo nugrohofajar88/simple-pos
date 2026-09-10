@@ -59,6 +59,10 @@ export const orders = sqliteTable('orders', {
     .default(sql`(current_timestamp)`),
   remoteId: integer('remote_id'),
   syncedAt: text('synced_at'),
+  // Penanda "user hapus order ini" - bukan LWW/2 arah, cuma sinyal 1 arah HP->server.
+  // Order disembunyikan dari UI begitu ini keisi, baris beneran kehapus (lokal+server)
+  // begitu sync konfirmasi. Lihat SyncService.pushDeletedOrders().
+  deletedAt: text('deleted_at'),
 });
 
 export const orderItems = sqliteTable('order_items', {

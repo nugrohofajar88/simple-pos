@@ -1,6 +1,6 @@
-import { eq, isNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
-import { apiFetch } from '@/src/api/client';
+import { apiFetch, ApiError } from '@/src/api/client';
 import { fetchMenu } from '@/src/api/menuApi';
 import { db } from '@/src/db/client';
 import { expenses, orderItemModifiers, orderItems, orders } from '@/src/db/schema';
@@ -21,7 +21,10 @@ function toIso(sqliteTimestamp: string): string {
  * `remoteId IS NULL` = "belum ke-sync", ditandai begitu server konfirmasi diterima.
  */
 async function pushOrders(): Promise<void> {
-  const dirty = await db.select().from(orders).where(isNull(orders.remoteId));
+  // Order yg udah ditandai deletedAt (dihapus sebelum sempat ke-sync) dikecualikan - gak perlu
+  // dikirim sama sekali, pushDeletedOrders() yg beresin (langsung hapus lokal, gak ada yg
+  // perlu diberitahu server krn belum pernah kekirim).
+  const dirty = await db.select().from(orders).where(and(isNull(orders.remoteId), isNull(orders.deletedAt)));
   if (dirty.length === 0) return;
 
   const payload = [];
@@ -72,6 +75,35 @@ async function pushOrders(): Promise<void> {
   }
 }
 
+/**
+ * Order yg ditandai deletedAt (lihat src/db/queries/orders.ts:deleteOrder) - kirim sinyal hapus
+ * ke server kalau udah pernah sync (remoteId ada), baru baris lokalnya beneran dihapus. Order yg
+ * belum sempat sync (remoteId null) langsung dihapus lokal aja, gak ada yg perlu diberitahu server.
+ */
+async function pushDeletedOrders(): Promise<void> {
+  const pending = await db.select().from(orders).where(isNotNull(orders.deletedAt));
+  if (pending.length === 0) return;
+
+  for (const order of pending) {
+    if (order.remoteId) {
+      try {
+        await apiFetch(`/orders/${order.remoteId}`, { method: 'DELETE' });
+      } catch (error) {
+        // 404 = emang udah gak ada di server (mis. sudah dihapus dari web duluan) - anggap
+        // tujuan tercapai, lanjut bersihkan lokal. Error lain (offline/500) - coba lagi nanti.
+        if (!(error instanceof ApiError) || error.status !== 404) continue;
+      }
+    }
+
+    const items = await db.select().from(orderItems).where(eq(orderItems.orderId, order.id));
+    for (const item of items) {
+      await db.delete(orderItemModifiers).where(eq(orderItemModifiers.orderItemId, item.id));
+    }
+    await db.delete(orderItems).where(eq(orderItems.orderId, order.id));
+    await db.delete(orders).where(eq(orders.id, order.id));
+  }
+}
+
 async function pushExpenses(): Promise<void> {
   const dirty = await db.select().from(expenses).where(isNull(expenses.remoteId));
   if (dirty.length === 0) return;
@@ -105,6 +137,7 @@ async function pushSettings(): Promise<void> {
  */
 async function syncAll(): Promise<void> {
   await pushOrders();
+  await pushDeletedOrders();
   await pushExpenses();
   await pushSettings();
   await fetchMenu();
@@ -114,6 +147,7 @@ async function syncAll(): Promise<void> {
 export const SyncService = {
   syncAll,
   pushOrders,
+  pushDeletedOrders,
   pushExpenses,
   pushSettings,
 };

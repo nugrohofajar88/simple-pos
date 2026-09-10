@@ -7,6 +7,7 @@ import m0002 from './0002_narrow_phantom_reporter.sql';
 import m0003 from './0003_slim_robin_chapel.sql';
 import m0004 from './0004_narrow_senator_kelly.sql';
 import m0005 from './0005_cheerful_komodo.sql';
+import m0006 from './0006_volatile_synch.sql';
 
   export default {
     journal,
@@ -16,7 +17,8 @@ m0001,
 m0002,
 m0003,
 m0004,
-m0005
+m0005,
+m0006
     }
   }
   

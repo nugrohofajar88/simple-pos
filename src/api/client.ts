@@ -1,5 +1,14 @@
 import { useSyncSettingsStore } from '@/src/sync/syncSettingsStore';
 
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
 export async function apiFetch(path: string, options: RequestInit = {}): Promise<any> {
   const { apiBaseUrl, apiToken } = useSyncSettingsStore.getState();
   if (!apiBaseUrl || !apiToken) {
@@ -32,7 +41,7 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
 
     const firstError = parsed?.errors ? Object.values(parsed.errors).flat()[0] : null;
     const message = (firstError as string | undefined) ?? parsed?.message ?? `API error ${response.status}: ${text.slice(0, 200)}`;
-    throw new Error(message);
+    throw new ApiError(message, response.status);
   }
 
   return response.json();

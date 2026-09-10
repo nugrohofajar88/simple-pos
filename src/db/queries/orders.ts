@@ -1,4 +1,4 @@
-import { desc, eq, like } from 'drizzle-orm';
+import { desc, eq, isNull, like } from 'drizzle-orm';
 
 import { db } from '@/src/db/client';
 import { orderItemModifiers, orderItems, orders } from '@/src/db/schema';
@@ -9,6 +9,10 @@ import { useDeviceStore } from '@/src/store/deviceStore';
 export type OrderRow = typeof orders.$inferSelect;
 export type OrderItemRow = typeof orderItems.$inferSelect;
 export type OrderItemModifierRow = typeof orderItemModifiers.$inferSelect;
+
+function sqliteNow(): string {
+  return new Date().toISOString().slice(0, 19).replace('T', ' ');
+}
 
 function todayDateKey(): string {
   const now = new Date();
@@ -82,7 +86,7 @@ export async function createOrder(input: {
 }
 
 export async function getOrders() {
-  return db.select().from(orders).orderBy(desc(orders.createdAt));
+  return db.select().from(orders).where(isNull(orders.deletedAt)).orderBy(desc(orders.createdAt));
 }
 
 export async function getOrderDetail(orderId: number) {
@@ -101,4 +105,12 @@ export async function getOrderDetail(orderId: number) {
   }
 
   return { order, items: itemsWithModifiers };
+}
+
+/**
+ * Order tetap immutable - "hapus" cuma nandain deletedAt (order langsung hilang dari UI),
+ * baris beneran kehapus (lokal + server) begitu SyncService.pushDeletedOrders() konfirmasi.
+ */
+export async function deleteOrder(orderId: number) {
+  await db.update(orders).set({ deletedAt: sqliteNow() }).where(eq(orders.id, orderId));
 }
