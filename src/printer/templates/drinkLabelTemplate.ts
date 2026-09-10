@@ -1,13 +1,5 @@
 import * as tspl from '@/src/printer/tspl/commands';
 
-function chunkModifierLines(modifiers: string[], perLine: number): string[] {
-  const lines: string[] = [];
-  for (let i = 0; i < modifiers.length; i += perLine) {
-    lines.push(modifiers.slice(i, i + perLine).join(', '));
-  }
-  return lines;
-}
-
 function boldText(x: number, y: number, content: string, font: string): string {
   return tspl.text(x, y, content, font) + tspl.text(x + 1, y, content, font);
 }
@@ -36,8 +28,8 @@ export function buildDrinkLabel(input: {
   buffer += tspl.text(x, y, input.productName, '3');
   y += 40;
 
-  for (const line of chunkModifierLines(input.modifiers, 2)) {
-    buffer += tspl.text(x, y, line, '2');
+  for (const modifier of input.modifiers) {
+    buffer += tspl.text(x, y, modifier, '2');
     y += 25;
   }
 
