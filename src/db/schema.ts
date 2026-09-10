@@ -105,6 +105,17 @@ export const expenses = sqliteTable('expenses', {
   syncedAt: text('synced_at'),
 });
 
+export const otherIncomes = sqliteTable('other_incomes', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  description: text('description').notNull(),
+  amount: real('amount').notNull(),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(current_timestamp)`),
+  remoteId: integer('remote_id'),
+  syncedAt: text('synced_at'),
+});
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
 }));

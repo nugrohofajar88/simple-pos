@@ -39,3 +39,15 @@ export async function fetchExpenses(): Promise<RemoteExpense[]> {
   const { data } = await apiFetch('/expenses');
   return data.expenses;
 }
+
+export type RemoteOtherIncome = {
+  id: number;
+  description: string;
+  amount: number;
+  createdAt: string;
+};
+
+export async function fetchOtherIncomes(): Promise<RemoteOtherIncome[]> {
+  const { data } = await apiFetch('/other-incomes');
+  return data.otherIncomes;
+}

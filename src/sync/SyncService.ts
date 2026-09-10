@@ -3,7 +3,7 @@ import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { apiFetch, ApiError } from '@/src/api/client';
 import { fetchMenu } from '@/src/api/menuApi';
 import { db } from '@/src/db/client';
-import { expenses, orderItemModifiers, orderItems, orders } from '@/src/db/schema';
+import { expenses, orderItemModifiers, orderItems, orders, otherIncomes } from '@/src/db/schema';
 import { useSyncSettingsStore } from '@/src/sync/syncSettingsStore';
 import { useCapitalStore } from '@/src/store/capitalStore';
 import { useStoreSettingsStore } from '@/src/store/storeSettingsStore';
@@ -121,6 +121,26 @@ async function pushExpenses(): Promise<void> {
   }
 }
 
+async function pushOtherIncomes(): Promise<void> {
+  const dirty = await db.select().from(otherIncomes).where(isNull(otherIncomes.remoteId));
+  if (dirty.length === 0) return;
+
+  const payload = dirty.map((i) => ({
+    localId: i.id,
+    description: i.description,
+    amount: i.amount,
+    createdAt: toIso(i.createdAt),
+  }));
+
+  const { results } = await apiFetch('/other-incomes', {
+    method: 'POST',
+    body: JSON.stringify({ otherIncomes: payload }),
+  });
+  for (const r of results) {
+    await db.update(otherIncomes).set({ remoteId: r.remoteId, syncedAt: sqliteNow() }).where(eq(otherIncomes.id, r.localId));
+  }
+}
+
 async function pushSettings(): Promise<void> {
   const storeName = useStoreSettingsStore.getState().storeName;
   const initialCapital = useCapitalStore.getState().initialCapital;
@@ -139,6 +159,7 @@ async function syncAll(): Promise<void> {
   await pushOrders();
   await pushDeletedOrders();
   await pushExpenses();
+  await pushOtherIncomes();
   await pushSettings();
   await fetchMenu();
   useSyncSettingsStore.getState().setLastSyncedAt(new Date().toISOString());
@@ -149,5 +170,6 @@ export const SyncService = {
   pushOrders,
   pushDeletedOrders,
   pushExpenses,
+  pushOtherIncomes,
   pushSettings,
 };

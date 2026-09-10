@@ -88,6 +88,16 @@ export default function ReportScreen() {
           </Pressable>
         </Pressable>
 
+        <Pressable style={styles.expenseCard} onPress={() => router.push('/report/other-incomes')}>
+          <View>
+            <Text style={styles.summaryLabel}>Pendapatan Lain</Text>
+            <Text style={styles.capitalEditHint}>Lihat daftar</Text>
+          </View>
+          <Pressable style={styles.addExpenseButton} onPress={() => router.push('/report/other-income/new')}>
+            <Text style={styles.addExpenseButtonText}>+ Pendapatan Lain</Text>
+          </Pressable>
+        </Pressable>
+
         <View style={styles.chartCard}>
           <Text style={styles.chartTitle}>Omzet 7 Hari Terakhir</Text>
           <View style={styles.chart}>
