@@ -3,7 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { createModifierGroup, createModifierOption, deleteModifierGroup, deleteModifierOption } from '@/src/api/menuApi';
+import {
+  createModifierGroup,
+  createModifierOption,
+  deleteModifierGroup,
+  deleteModifierOption,
+  updateModifierGroup,
+  updateModifierOption,
+} from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
 import {
@@ -28,6 +35,12 @@ export default function ProductModifiersScreen() {
   const [newGroupRequired, setNewGroupRequired] = useState(false);
 
   const [optionForms, setOptionForms] = useState<Record<number, { name: string; priceDelta: string }>>({});
+
+  const [editingGroupId, setEditingGroupId] = useState<number | null>(null);
+  const [groupEditForm, setGroupEditForm] = useState({ name: '', multiple: false, required: false });
+
+  const [editingOptionId, setEditingOptionId] = useState<number | null>(null);
+  const [optionEditForm, setOptionEditForm] = useState({ name: '', priceDelta: '', isDefault: false });
 
   const load = useCallback(async () => {
     const [product, groupRows] = await Promise.all([getProduct(productId), getModifierGroupsWithOptions(productId)]);
@@ -55,6 +68,33 @@ export default function ProductModifiersScreen() {
       setNewGroupName('');
       setNewGroupMultiple(false);
       setNewGroupRequired(false);
+      load();
+    } catch (error) {
+      Alert.alert('Gagal simpan', String((error as Error).message ?? error));
+    }
+  };
+
+  const startEditGroup = (group: GroupWithOptions) => {
+    setEditingGroupId(group.id);
+    setGroupEditForm({
+      name: group.name,
+      multiple: group.selectionType === 'multiple',
+      required: group.isRequired,
+    });
+  };
+
+  const handleSaveGroup = async () => {
+    if (!groupEditForm.name.trim() || editingGroupId === null) {
+      Alert.alert('Nama kosong', 'Nama grup modifier harus diisi.');
+      return;
+    }
+    try {
+      await updateModifierGroup(editingGroupId, {
+        name: groupEditForm.name.trim(),
+        selectionType: groupEditForm.multiple ? 'multiple' : 'single',
+        isRequired: groupEditForm.required,
+      });
+      setEditingGroupId(null);
       load();
     } catch (error) {
       Alert.alert('Gagal simpan', String((error as Error).message ?? error));
@@ -99,6 +139,38 @@ export default function ProductModifiersScreen() {
     }
   };
 
+  const startEditOption = (option: ModifierOptionRow) => {
+    setEditingOptionId(option.id);
+    setOptionEditForm({
+      name: option.name,
+      priceDelta: String(option.priceDelta),
+      isDefault: option.isDefault,
+    });
+  };
+
+  const handleSaveOption = async () => {
+    if (!optionEditForm.name.trim() || editingOptionId === null) {
+      Alert.alert('Nama kosong', 'Nama opsi harus diisi.');
+      return;
+    }
+    const priceDelta = optionEditForm.priceDelta ? Number(optionEditForm.priceDelta) : 0;
+    if (Number.isNaN(priceDelta)) {
+      Alert.alert('Harga tambahan tidak valid', 'Isi angka, boleh 0.');
+      return;
+    }
+    try {
+      await updateModifierOption(editingOptionId, {
+        name: optionEditForm.name.trim(),
+        priceDelta,
+        isDefault: optionEditForm.isDefault,
+      });
+      setEditingOptionId(null);
+      load();
+    } catch (error) {
+      Alert.alert('Gagal simpan', String((error as Error).message ?? error));
+    }
+  };
+
   const handleDeleteOption = (option: ModifierOptionRow) => {
     Alert.alert('Hapus Opsi', `Yakin hapus opsi "${option.name}"?`, [
       { text: 'Batal', style: 'cancel' },
@@ -136,26 +208,100 @@ export default function ProductModifiersScreen() {
 
       {groups.map((group) => (
         <View key={group.id} style={styles.groupBlock}>
-          <View style={styles.groupHeader}>
-            <Text style={styles.groupName}>
-              {group.name} <Text style={styles.groupMeta}>({group.selectionType === 'multiple' ? 'multi' : 'single'}{group.isRequired ? ', wajib' : ''})</Text>
-            </Text>
-            <Pressable onPress={() => handleDeleteGroup(group)}>
-              <Text style={styles.deleteLink}>Hapus</Text>
-            </Pressable>
-          </View>
-
-          {group.options.map((option) => (
-            <View key={option.id} style={styles.optionRow}>
-              <Text style={styles.optionText}>
-                {option.name} {option.priceDelta > 0 ? `(+Rp${option.priceDelta.toLocaleString('id-ID')})` : ''}
-                {option.isDefault ? ' · default' : ''}
-              </Text>
-              <Pressable onPress={() => handleDeleteOption(option)}>
-                <Text style={styles.deleteLinkSmall}>Hapus</Text>
-              </Pressable>
+          {editingGroupId === group.id ? (
+            <View style={styles.editBlock}>
+              <AppTextInput
+                style={styles.input}
+                value={groupEditForm.name}
+                onChangeText={(text) => setGroupEditForm((prev) => ({ ...prev, name: text }))}
+              />
+              <View style={styles.switchRow}>
+                <Text>Boleh pilih lebih dari satu</Text>
+                <Switch
+                  value={groupEditForm.multiple}
+                  onValueChange={(value) => setGroupEditForm((prev) => ({ ...prev, multiple: value }))}
+                />
+              </View>
+              <View style={styles.switchRow}>
+                <Text>Wajib dipilih</Text>
+                <Switch
+                  value={groupEditForm.required}
+                  onValueChange={(value) => setGroupEditForm((prev) => ({ ...prev, required: value }))}
+                />
+              </View>
+              <View style={styles.editActionRow}>
+                <Pressable style={styles.saveButtonSmall} onPress={handleSaveGroup}>
+                  <Text style={styles.saveButtonText}>Simpan</Text>
+                </Pressable>
+                <Pressable style={styles.cancelButton} onPress={() => setEditingGroupId(null)}>
+                  <Text style={styles.cancelButtonText}>Batal</Text>
+                </Pressable>
+              </View>
             </View>
-          ))}
+          ) : (
+            <View style={styles.groupHeader}>
+              <Text style={styles.groupName}>
+                {group.name} <Text style={styles.groupMeta}>({group.selectionType === 'multiple' ? 'multi' : 'single'}{group.isRequired ? ', wajib' : ''})</Text>
+              </Text>
+              <View style={styles.groupHeaderActions}>
+                <Pressable onPress={() => startEditGroup(group)}>
+                  <Text style={styles.editLink}>Edit</Text>
+                </Pressable>
+                <Pressable onPress={() => handleDeleteGroup(group)}>
+                  <Text style={styles.deleteLink}>Hapus</Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+
+          {group.options.map((option) =>
+            editingOptionId === option.id ? (
+              <View key={option.id} style={styles.editOptionBlock}>
+                <View style={styles.addOptionRow}>
+                  <AppTextInput
+                    style={styles.optionInput}
+                    value={optionEditForm.name}
+                    onChangeText={(text) => setOptionEditForm((prev) => ({ ...prev, name: text }))}
+                  />
+                  <CurrencyInput
+                    style={styles.priceInput}
+                    value={optionEditForm.priceDelta}
+                    onChangeText={(text) => setOptionEditForm((prev) => ({ ...prev, priceDelta: text }))}
+                  />
+                </View>
+                <View style={styles.switchRow}>
+                  <Text style={styles.optionText}>Default</Text>
+                  <Switch
+                    value={optionEditForm.isDefault}
+                    onValueChange={(value) => setOptionEditForm((prev) => ({ ...prev, isDefault: value }))}
+                  />
+                </View>
+                <View style={styles.editActionRow}>
+                  <Pressable style={styles.saveButtonSmall} onPress={handleSaveOption}>
+                    <Text style={styles.saveButtonText}>Simpan</Text>
+                  </Pressable>
+                  <Pressable style={styles.cancelButton} onPress={() => setEditingOptionId(null)}>
+                    <Text style={styles.cancelButtonText}>Batal</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : (
+              <View key={option.id} style={styles.optionRow}>
+                <Text style={styles.optionText}>
+                  {option.name} {option.priceDelta > 0 ? `(+Rp${option.priceDelta.toLocaleString('id-ID')})` : ''}
+                  {option.isDefault ? ' · default' : ''}
+                </Text>
+                <View style={styles.groupHeaderActions}>
+                  <Pressable onPress={() => startEditOption(option)}>
+                    <Text style={styles.editLinkSmall}>Edit</Text>
+                  </Pressable>
+                  <Pressable onPress={() => handleDeleteOption(option)}>
+                    <Text style={styles.deleteLinkSmall}>Hapus</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )
+          )}
 
           <View style={styles.addOptionRow}>
             <AppTextInput
@@ -214,10 +360,19 @@ const styles = StyleSheet.create({
   emptyHint: { color: '#888', fontSize: 13, marginBottom: 16 },
   groupBlock: { marginBottom: 20, borderWidth: 1, borderColor: '#eee', borderRadius: 10, padding: 12 },
   groupHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  groupHeaderActions: { flexDirection: 'row', gap: 12 },
   groupName: { fontSize: 16, fontWeight: '600' },
   groupMeta: { fontSize: 12, fontWeight: '400', color: '#888' },
+  editLink: { color: '#2563eb', fontSize: 13 },
+  editLinkSmall: { color: '#2563eb', fontSize: 12 },
   deleteLink: { color: '#dc2626', fontSize: 13 },
   deleteLinkSmall: { color: '#dc2626', fontSize: 12 },
+  editBlock: { gap: 8, marginBottom: 8 },
+  editOptionBlock: { gap: 8, paddingLeft: 8, paddingVertical: 6, backgroundColor: '#f8f9fb', borderRadius: 8, marginBottom: 4 },
+  editActionRow: { flexDirection: 'row', gap: 8 },
+  saveButtonSmall: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8 },
+  cancelButton: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8, borderWidth: 1, borderColor: '#ddd' },
+  cancelButtonText: { color: '#555', fontWeight: '600', fontSize: 13 },
   optionRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4, paddingLeft: 8 },
   optionText: { fontSize: 14, color: '#333' },
   addOptionRow: { flexDirection: 'row', gap: 8, marginTop: 8, alignItems: 'center' },
