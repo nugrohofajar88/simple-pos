@@ -25,7 +25,7 @@ export function buildDrinkLabel(input: {
     y += 30;
   }
 
-  buffer += tspl.text(x, y, input.productName, '3');
+  buffer += tspl.text(x, y, input.productName.toUpperCase(), '3');
   y += 40;
 
   for (const modifier of input.modifiers) {
