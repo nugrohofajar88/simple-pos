@@ -6,6 +6,7 @@ import { AppTextInput } from '@/src/components/AppTextInput';
 import { SyncService } from '@/src/sync/SyncService';
 import { useSyncSettingsStore } from '@/src/sync/syncSettingsStore';
 import { useDeviceStore } from '@/src/store/deviceStore';
+import { colors, fonts, radius } from '@/src/theme';
 
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
@@ -79,21 +80,28 @@ export default function SyncSettingsScreen() {
       </Text>
 
       <Pressable style={styles.syncButton} onPress={handleSyncNow} disabled={syncing}>
-        {syncing ? <ActivityIndicator color="#fff" /> : <Text style={styles.syncButtonText}>Sync Sekarang</Text>}
+        {syncing ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.syncButtonText}>Sync Sekarang</Text>}
       </Pressable>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 10 },
-  title: { fontSize: 20, fontWeight: '600' },
-  hint: { fontSize: 12, color: '#888', marginBottom: 4 },
-  label: { fontSize: 14, fontWeight: '600', color: '#333' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16 },
-  saveButton: { backgroundColor: '#2563eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
-  saveButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  status: { fontSize: 12, color: '#666', marginTop: 16, textAlign: 'center' },
-  syncButton: { backgroundColor: '#16a34a', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
-  syncButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  container: { flex: 1, padding: 16, gap: 10, backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  hint: { fontSize: 12, color: colors.textMuted, marginBottom: 4, fontFamily: fonts.regular },
+  label: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textSecondary },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: colors.card,
+  },
+  saveButton: { backgroundColor: colors.primary, padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 8 },
+  saveButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
+  status: { fontSize: 12, color: colors.textSecondary, marginTop: 16, textAlign: 'center', fontFamily: fonts.regular },
+  syncButton: { backgroundColor: colors.success, padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 8 },
+  syncButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
 });

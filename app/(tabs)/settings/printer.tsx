@@ -7,6 +7,7 @@ import { useLabelSettingsStore } from '@/src/printer/labelSettingsStore';
 import { BluetoothTransport, type BluetoothDevice } from '@/src/printer/BluetoothTransport';
 import { usePrinterStore } from '@/src/printer/printerStore';
 import * as tspl from '@/src/printer/tspl/commands';
+import { colors, fonts, radius } from '@/src/theme';
 
 function buildTestLabel(settings: {
   widthMm: number;
@@ -174,7 +175,7 @@ export default function PrinterSettingsScreen() {
       </View>
 
       <Pressable style={styles.button} onPress={loadPairedDevices} disabled={loading}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Muat Daftar Printer</Text>}
+        {loading ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.buttonText}>Muat Daftar Printer</Text>}
       </Pressable>
 
       <FlatList
@@ -198,7 +199,7 @@ export default function PrinterSettingsScreen() {
                 disabled={busyAddress === item.address}
               >
                 {busyAddress === item.address ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={colors.onPrimary} />
                 ) : (
                   <Text style={styles.buttonText}>Pilih</Text>
                 )}
@@ -219,33 +220,40 @@ export default function PrinterSettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 12 },
-  title: { fontSize: 20, fontWeight: '600' },
-  note: { fontSize: 13, color: '#666' },
-  labelSettingsBlock: { borderWidth: 1, borderColor: '#eee', borderRadius: 10, padding: 12, gap: 8 },
-  sectionTitle: { fontSize: 15, fontWeight: '600' },
-  hint: { fontSize: 12, color: '#888' },
+  container: { flex: 1, padding: 16, gap: 12, backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  note: { fontSize: 13, color: colors.textSecondary, fontFamily: fonts.regular },
+  labelSettingsBlock: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12, gap: 8 },
+  sectionTitle: { fontSize: 15, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  hint: { fontSize: 12, color: colors.textMuted, fontFamily: fonts.regular },
   fieldRow: { flexDirection: 'row', gap: 10 },
   fieldCol: { flex: 1, gap: 4 },
-  fieldLabel: { fontSize: 12, color: '#333', fontWeight: '600' },
-  fieldInput: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 8, fontSize: 14 },
-  button: { backgroundColor: '#2563eb', padding: 12, borderRadius: 8, alignItems: 'center' },
-  buttonText: { color: '#fff', fontWeight: '600' },
+  fieldLabel: { fontSize: 12, color: colors.textSecondary, fontFamily: fonts.semiBold },
+  fieldInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 8,
+    fontSize: 14,
+    backgroundColor: colors.card,
+  },
+  button: { backgroundColor: colors.primary, padding: 12, borderRadius: radius.sm, alignItems: 'center' },
+  buttonText: { color: colors.onPrimary, fontFamily: fonts.semiBold },
   list: { flex: 1, marginTop: 8 },
-  empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  empty: { color: colors.textSecondary, textAlign: 'center', marginTop: 24, fontFamily: fonts.regular },
   deviceRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
   deviceInfo: { flex: 1 },
-  deviceName: { fontSize: 16, fontWeight: '500' },
-  deviceAddress: { fontSize: 12, color: '#888' },
-  connected: { fontSize: 12, color: '#16a34a', marginTop: 2, fontWeight: '600' },
+  deviceName: { fontSize: 16, fontFamily: fonts.medium, color: colors.textPrimary },
+  deviceAddress: { fontSize: 12, color: colors.textMuted, fontFamily: fonts.regular },
+  connected: { fontSize: 12, color: colors.success, marginTop: 2, fontFamily: fonts.semiBold },
   actionCol: { flexDirection: 'row', gap: 8 },
-  selectButton: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  testButton: { backgroundColor: '#16a34a', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
+  selectButton: { backgroundColor: colors.primary, paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm },
+  testButton: { backgroundColor: colors.success, paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm },
 });

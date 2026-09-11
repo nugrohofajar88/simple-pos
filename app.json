@@ -27,7 +27,8 @@
       "expo-router",
       "expo-status-bar",
       "expo-sqlite",
-      "./plugins/withBluetoothPermissions.js"
+      "./plugins/withBluetoothPermissions.js",
+      "expo-font"
     ],
     "extra": {
       "router": {},

@@ -3,6 +3,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { cartItemTotal, cartSubtotal, useCartStore } from '@/src/store/cartStore';
+import { colors, fonts, radius } from '@/src/theme';
 
 export default function CartScreen() {
   const router = useRouter();
@@ -66,40 +67,40 @@ export default function CartScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  title: { fontSize: 20, fontWeight: '600', marginBottom: 12 },
-  empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  container: { flex: 1, padding: 16, backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary, marginBottom: 12 },
+  empty: { color: colors.textSecondary, textAlign: 'center', marginTop: 24, fontFamily: fonts.regular },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
     gap: 8,
   },
   itemInfo: { flex: 1 },
-  itemName: { fontSize: 15, fontWeight: '600' },
-  itemModifiers: { fontSize: 12, color: '#666', marginTop: 2 },
-  itemNote: { fontSize: 12, color: '#888', marginTop: 2, fontStyle: 'italic' },
-  itemPrice: { fontSize: 14, color: '#333', marginTop: 4 },
+  itemName: { fontSize: 15, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  itemModifiers: { fontSize: 12, color: colors.textSecondary, marginTop: 2, fontFamily: fonts.regular },
+  itemNote: { fontSize: 12, color: colors.textMuted, marginTop: 2, fontStyle: 'italic', fontFamily: fonts.regular },
+  itemPrice: { fontSize: 14, color: colors.textSecondary, marginTop: 4, fontFamily: fonts.medium },
   qtyStepper: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   qtyButton: {
     width: 28,
     height: 28,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  qtyButtonText: { fontSize: 16, fontWeight: '600' },
-  qtyValue: { fontSize: 15, fontWeight: '600', minWidth: 20, textAlign: 'center' },
-  removeLink: { color: '#dc2626', fontSize: 13 },
-  footer: { borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 12, marginTop: 8 },
+  qtyButtonText: { fontSize: 16, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  qtyValue: { fontSize: 15, fontFamily: fonts.semiBold, color: colors.textPrimary, minWidth: 20, textAlign: 'center' },
+  removeLink: { color: colors.destructive, fontSize: 13, fontFamily: fonts.regular },
+  footer: { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 12, marginTop: 8 },
   subtotalRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  subtotalLabel: { fontSize: 16, fontWeight: '600' },
-  subtotalValue: { fontSize: 18, fontWeight: '700' },
-  checkoutButton: { backgroundColor: '#2563eb', padding: 16, borderRadius: 8, alignItems: 'center' },
-  checkoutButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  subtotalLabel: { fontSize: 16, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  subtotalValue: { fontSize: 18, fontFamily: fonts.bold, color: colors.textPrimary },
+  checkoutButton: { backgroundColor: colors.primary, padding: 16, borderRadius: radius.sm, alignItems: 'center' },
+  checkoutButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
 });

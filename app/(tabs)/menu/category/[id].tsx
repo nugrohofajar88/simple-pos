@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { deleteCategory, updateCategory } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { getCategory } from '@/src/db/queries/menu';
+import { colors, fonts, radius } from '@/src/theme';
 
 export default function CategoryEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -94,12 +95,19 @@ export default function CategoryEditScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 12 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  label: { fontSize: 14, fontWeight: '600', color: '#333' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16 },
-  saveButton: { backgroundColor: '#2563eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
-  saveButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  deleteButton: { padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 4 },
-  deleteButtonText: { color: '#dc2626', fontWeight: '600' },
+  container: { flex: 1, padding: 16, gap: 12, backgroundColor: colors.background },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
+  label: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textSecondary },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: colors.card,
+  },
+  saveButton: { backgroundColor: colors.primary, padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 8 },
+  saveButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
+  deleteButton: { padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 4 },
+  deleteButtonText: { color: colors.destructive, fontFamily: fonts.semiBold },
 });

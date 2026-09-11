@@ -8,6 +8,7 @@ import { resetAllData } from '@/src/db/queries/reset';
 import { useCapitalStore } from '@/src/store/capitalStore';
 import { useCartStore } from '@/src/store/cartStore';
 import { useStoreSettingsStore } from '@/src/store/storeSettingsStore';
+import { colors, fonts, radius } from '@/src/theme';
 
 export default function SettingsScreen() {
   const storeName = useStoreSettingsStore((state) => state.storeName);
@@ -87,7 +88,7 @@ export default function SettingsScreen() {
       <View style={styles.dangerSection}>
         <Text style={styles.dangerTitle}>Zona Berbahaya</Text>
         <Pressable style={styles.resetButton} onPress={handleResetPress} disabled={resetting}>
-          {resetting ? <ActivityIndicator color="#dc2626" /> : <Text style={styles.resetButtonText}>Reset Semua Data</Text>}
+          {resetting ? <ActivityIndicator color={colors.destructive} /> : <Text style={styles.resetButtonText}>Reset Semua Data</Text>}
         </Pressable>
       </View>
     </SafeAreaView>
@@ -95,23 +96,30 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 12 },
-  title: { fontSize: 20, fontWeight: '600', marginBottom: 8 },
-  section: { gap: 8, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  label: { fontSize: 14, fontWeight: '600', color: '#333' },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16 },
-  saveButton: { backgroundColor: '#2563eb', padding: 12, borderRadius: 8, alignItems: 'center' },
-  saveButtonText: { color: '#fff', fontWeight: '600' },
-  item: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  itemText: { fontSize: 16 },
+  container: { flex: 1, padding: 16, gap: 12, backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary, marginBottom: 8 },
+  section: { gap: 8, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: colors.border },
+  label: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textSecondary },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: colors.card,
+  },
+  saveButton: { backgroundColor: colors.primary, padding: 12, borderRadius: radius.sm, alignItems: 'center' },
+  saveButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  item: { paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.border },
+  itemText: { fontSize: 16, color: colors.textPrimary, fontFamily: fonts.regular },
   dangerSection: { marginTop: 24, gap: 8 },
-  dangerTitle: { fontSize: 13, fontWeight: '600', color: '#dc2626' },
+  dangerTitle: { fontSize: 13, fontFamily: fonts.semiBold, color: colors.destructive },
   resetButton: {
     borderWidth: 1,
-    borderColor: '#dc2626',
+    borderColor: colors.destructive,
     padding: 14,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     alignItems: 'center',
   },
-  resetButtonText: { color: '#dc2626', fontWeight: '600' },
+  resetButtonText: { color: colors.destructive, fontFamily: fonts.semiBold },
 });

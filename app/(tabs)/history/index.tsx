@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchOrders } from '@/src/api/reportApi';
 import { getOrders, type OrderRow } from '@/src/db/queries/orders';
+import { colors, fonts, radius } from '@/src/theme';
 
 type DisplayOrder = {
   key: string;
@@ -114,16 +115,17 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  title: { fontSize: 20, fontWeight: '600', marginBottom: 12 },
-  empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  container: { flex: 1, padding: 16, backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary, marginBottom: 12 },
+  empty: { color: colors.textSecondary, textAlign: 'center', marginTop: 24, fontFamily: fonts.regular },
   offlineNotice: {
     fontSize: 12,
-    color: '#92400e',
-    backgroundColor: '#fef3c7',
+    color: colors.warningText,
+    backgroundColor: colors.warningBg,
     padding: 8,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     marginBottom: 12,
+    fontFamily: fonts.regular,
   },
   orderRow: {
     flexDirection: 'row',
@@ -131,10 +133,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
   orderInfo: { flex: 1 },
-  orderNumber: { fontSize: 15, fontWeight: '600' },
-  orderMeta: { fontSize: 12, color: '#666', marginTop: 2 },
-  orderTotal: { fontSize: 15, fontWeight: '700' },
+  orderNumber: { fontSize: 15, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  orderMeta: { fontSize: 12, color: colors.textSecondary, marginTop: 2, fontFamily: fonts.regular },
+  orderTotal: { fontSize: 15, fontFamily: fonts.bold, color: colors.textPrimary },
 });

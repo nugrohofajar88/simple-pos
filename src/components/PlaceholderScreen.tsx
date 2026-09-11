@@ -1,6 +1,8 @@
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors, fonts } from '@/src/theme';
+
 export function PlaceholderScreen({ title, note }: { title: string; note?: string }) {
   return (
     <SafeAreaView style={styles.container}>
@@ -16,17 +18,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: colors.background,
   },
   title: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#1c1917',
+    fontFamily: fonts.semiBold,
+    color: colors.textPrimary,
   },
   note: {
     marginTop: 8,
     fontSize: 14,
-    color: '#78716c',
+    fontFamily: fonts.regular,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

@@ -13,6 +13,7 @@ import {
 import { PrinterService } from '@/src/printer/PrinterService';
 import { usePrinterStore } from '@/src/printer/printerStore';
 import { SyncService } from '@/src/sync/SyncService';
+import { colors, fonts, radius } from '@/src/theme';
 
 type ItemWithModifiers = OrderItemRow & { modifiers: OrderItemModifierRow[] };
 
@@ -153,14 +154,14 @@ export default function OrderDetailScreen() {
         <View style={styles.printRow}>
           <Pressable style={styles.printButton} onPress={handlePrintLabel} disabled={printing !== null}>
             {printing === 'label' ? (
-              <ActivityIndicator color="#2563eb" />
+              <ActivityIndicator color={colors.primary} />
             ) : (
               <Text style={styles.printButtonText}>Cetak Label</Text>
             )}
           </Pressable>
           <Pressable style={styles.printButton} onPress={handlePrintReceipt} disabled={printing !== null}>
             {printing === 'receipt' ? (
-              <ActivityIndicator color="#2563eb" />
+              <ActivityIndicator color={colors.primary} />
             ) : (
               <Text style={styles.printButtonText}>Cetak Nota</Text>
             )}
@@ -168,7 +169,7 @@ export default function OrderDetailScreen() {
         </View>
 
         <Pressable style={styles.deleteButton} onPress={handleDelete} disabled={deleting}>
-          {deleting ? <ActivityIndicator color="#dc2626" /> : <Text style={styles.deleteButtonText}>Hapus Order</Text>}
+          {deleting ? <ActivityIndicator color={colors.destructive} /> : <Text style={styles.deleteButtonText}>Hapus Order</Text>}
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -176,52 +177,52 @@ export default function OrderDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1, padding: 16 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  orderNumber: { fontSize: 20, fontWeight: '700' },
-  meta: { fontSize: 13, color: '#666', marginTop: 2 },
-  itemsBlock: { borderTopWidth: 1, borderTopColor: '#eee', marginTop: 16, paddingTop: 8 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
+  orderNumber: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  meta: { fontSize: 13, color: colors.textSecondary, marginTop: 2, fontFamily: fonts.regular },
+  itemsBlock: { borderTopWidth: 1, borderTopColor: colors.border, marginTop: 16, paddingTop: 8 },
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#f2f2f2',
+    borderBottomColor: colors.border,
   },
   itemInfo: { flex: 1 },
-  itemName: { fontSize: 14, fontWeight: '600' },
-  itemModifiers: { fontSize: 12, color: '#666', marginTop: 2 },
-  itemNote: { fontSize: 12, color: '#888', marginTop: 2, fontStyle: 'italic' },
-  itemPrice: { fontSize: 14, color: '#333' },
+  itemName: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  itemModifiers: { fontSize: 12, color: colors.textSecondary, marginTop: 2, fontFamily: fonts.regular },
+  itemNote: { fontSize: 12, color: colors.textMuted, marginTop: 2, fontStyle: 'italic', fontFamily: fonts.regular },
+  itemPrice: { fontSize: 14, color: colors.textSecondary, fontFamily: fonts.medium },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: colors.border,
     paddingTop: 12,
     marginTop: 8,
   },
-  totalLabel: { fontSize: 16, fontWeight: '600' },
-  totalValue: { fontSize: 18, fontWeight: '700' },
-  printerStatus: { fontSize: 12, color: '#888', marginTop: 16 },
+  totalLabel: { fontSize: 16, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  totalValue: { fontSize: 18, fontFamily: fonts.bold, color: colors.textPrimary },
+  printerStatus: { fontSize: 12, color: colors.textMuted, marginTop: 16, fontFamily: fonts.regular },
   printRow: { flexDirection: 'row', gap: 10, marginTop: 8, marginBottom: 32 },
   printButton: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#2563eb',
-    borderRadius: 8,
+    borderColor: colors.primary,
+    borderRadius: radius.sm,
     padding: 14,
     alignItems: 'center',
   },
-  printButtonText: { color: '#2563eb', fontWeight: '600' },
+  printButtonText: { color: colors.primary, fontFamily: fonts.semiBold },
   deleteButton: {
     borderWidth: 1,
-    borderColor: '#dc2626',
-    borderRadius: 8,
+    borderColor: colors.destructive,
+    borderRadius: radius.sm,
     padding: 14,
     alignItems: 'center',
     marginBottom: 32,
   },
-  deleteButtonText: { color: '#dc2626', fontWeight: '600' },
+  deleteButtonText: { color: colors.destructive, fontFamily: fonts.semiBold },
 });

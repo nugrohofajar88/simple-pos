@@ -7,6 +7,7 @@ import { AppTextInput } from '@/src/components/AppTextInput';
 import { createOrder } from '@/src/db/queries/orders';
 import { cartSubtotal, useCartStore } from '@/src/store/cartStore';
 import { SyncService } from '@/src/sync/SyncService';
+import { colors, fonts, radius } from '@/src/theme';
 
 const PAYMENT_METHODS = ['Cash', 'QRIS', 'Debit'] as const;
 
@@ -97,29 +98,49 @@ export default function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1, padding: 16 },
-  title: { fontSize: 20, fontWeight: '600', marginBottom: 16 },
-  label: { fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 8 },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary, marginBottom: 16 },
+  label: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textSecondary, marginBottom: 8 },
   methodRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
-  methodChip: { borderWidth: 1, borderColor: '#ddd', borderRadius: 20, paddingVertical: 8, paddingHorizontal: 16 },
-  methodChipActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  methodChipText: { color: '#333' },
-  methodChipTextActive: { color: '#fff', fontWeight: '600' },
-  noteInput: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 14, marginBottom: 16 },
-  summaryBlock: { borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 12, marginBottom: 12 },
+  methodChip: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.full,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  methodChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  methodChipText: { color: colors.textSecondary, fontFamily: fonts.regular },
+  methodChipTextActive: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  noteInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 10,
+    fontSize: 14,
+    marginBottom: 16,
+    backgroundColor: colors.card,
+  },
+  summaryBlock: { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 12, marginBottom: 12 },
   summaryRow: { paddingVertical: 4 },
-  summaryText: { fontSize: 14, color: '#333' },
+  summaryText: { fontSize: 14, color: colors.textSecondary, fontFamily: fonts.regular },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: colors.border,
     paddingTop: 12,
     marginBottom: 20,
   },
-  totalLabel: { fontSize: 16, fontWeight: '600' },
-  totalValue: { fontSize: 18, fontWeight: '700' },
-  confirmButton: { backgroundColor: '#2563eb', padding: 16, borderRadius: 8, alignItems: 'center', marginBottom: 32 },
-  confirmButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  totalLabel: { fontSize: 16, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  totalValue: { fontSize: 18, fontFamily: fonts.bold, color: colors.textPrimary },
+  confirmButton: {
+    backgroundColor: colors.primary,
+    padding: 16,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  confirmButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
 });

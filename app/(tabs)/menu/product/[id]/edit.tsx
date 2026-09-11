@@ -7,6 +7,7 @@ import { deleteProduct, updateProduct } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
 import { getCategories, getProduct, type CategoryRow } from '@/src/db/queries/menu';
+import { colors, fonts, radius, cardShadow } from '@/src/theme';
 
 export default function EditProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -162,48 +163,56 @@ export default function EditProductScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#f5f6f8' },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1 },
   contentContainer: { padding: 16, paddingBottom: 32 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 20, fontWeight: '600', marginBottom: 12, color: '#111' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, marginBottom: 12, color: colors.textPrimary },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.card,
     borderWidth: 1,
-    borderColor: '#e5e5e5',
-    borderRadius: 12,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     padding: 14,
     marginBottom: 14,
     gap: 8,
+    ...cardShadow,
   },
-  label: { fontSize: 13, fontWeight: '600', color: '#555', marginTop: 4 },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16, backgroundColor: '#fff' },
+  label: { fontSize: 13, fontFamily: fonts.semiBold, color: colors.textSecondary, marginTop: 4 },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: colors.card,
+  },
   row: { flexDirection: 'row', gap: 10 },
   rowCol: { flex: 1 },
   chipRow: { flexGrow: 0 },
   chipRowContent: { flexDirection: 'row', alignItems: 'center' },
   chip: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 20,
+    borderColor: colors.border,
+    borderRadius: radius.full,
     paddingVertical: 8,
     paddingHorizontal: 14,
     marginRight: 8,
     alignSelf: 'flex-start',
   },
-  chipActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  chipText: { color: '#333' },
-  chipTextActive: { color: '#fff', fontWeight: '600' },
-  saveButton: { backgroundColor: '#2563eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
-  saveButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  chipText: { color: colors.textSecondary, fontFamily: fonts.regular },
+  chipTextActive: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  saveButton: { backgroundColor: colors.primary, padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 8 },
+  saveButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
   modifierButton: {
     borderWidth: 1,
-    borderColor: '#2563eb',
+    borderColor: colors.primary,
     padding: 14,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     alignItems: 'center',
   },
-  modifierButtonText: { color: '#2563eb', fontWeight: '600' },
-  deleteButton: { padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
-  deleteButtonText: { color: '#dc2626', fontWeight: '600' },
+  modifierButtonText: { color: colors.primary, fontFamily: fonts.semiBold },
+  deleteButton: { padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 8 },
+  deleteButtonText: { color: colors.destructive, fontFamily: fonts.semiBold },
 });

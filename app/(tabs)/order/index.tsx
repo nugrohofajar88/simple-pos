@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { fetchMenu } from '@/src/api/menuApi';
 import { getAllProducts, getCategories, type CategoryRow, type ProductRow } from '@/src/db/queries/menu';
 import { useCartStore } from '@/src/store/cartStore';
+import { colors, fonts, radius } from '@/src/theme';
 
 type CategoryWithProducts = CategoryRow & { products: ProductRow[] };
 
@@ -76,31 +77,32 @@ export default function OrderScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  title: { fontSize: 20, fontWeight: '600' },
-  cartButton: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  cartButtonText: { color: '#fff', fontWeight: '600' },
-  empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  cartButton: { backgroundColor: colors.primary, paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm },
+  cartButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  empty: { color: colors.textSecondary, textAlign: 'center', marginTop: 24, fontFamily: fonts.regular },
   offlineNotice: {
     fontSize: 12,
-    color: '#92400e',
-    backgroundColor: '#fef3c7',
+    color: colors.warningText,
+    backgroundColor: colors.warningBg,
     padding: 8,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     marginBottom: 12,
+    fontFamily: fonts.regular,
   },
   categoryBlock: { marginBottom: 20 },
-  categoryName: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  categoryName: { fontSize: 16, fontFamily: fonts.semiBold, color: colors.textPrimary, marginBottom: 8 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   productCard: {
     width: '47%',
     borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 10,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     padding: 12,
-    backgroundColor: '#fafafa',
+    backgroundColor: colors.card,
   },
-  productName: { fontSize: 14, fontWeight: '600', marginBottom: 4 },
-  productPrice: { fontSize: 13, color: '#555' },
+  productName: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textPrimary, marginBottom: 4 },
+  productPrice: { fontSize: 13, color: colors.textSecondary, fontFamily: fonts.regular },
 });

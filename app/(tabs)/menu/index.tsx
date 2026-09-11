@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchMenu } from '@/src/api/menuApi';
 import { getAllProducts, getCategories, type CategoryRow, type ProductRow } from '@/src/db/queries/menu';
+import { colors, fonts, radius, cardShadow } from '@/src/theme';
 
 type CategoryWithProducts = CategoryRow & { products: ProductRow[] };
 
@@ -91,47 +92,51 @@ export default function MenuScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
-  title: { fontSize: 20, fontWeight: '600' },
-  addButton: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  addButtonText: { color: '#fff', fontWeight: '600' },
-  empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  addButton: { backgroundColor: colors.primary, paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm },
+  addButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  empty: { color: colors.textSecondary, textAlign: 'center', marginTop: 24, fontFamily: fonts.regular },
   offlineNotice: {
     fontSize: 12,
-    color: '#92400e',
-    backgroundColor: '#fef3c7',
+    color: colors.warningText,
+    backgroundColor: colors.warningBg,
     padding: 8,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     marginBottom: 12,
+    fontFamily: fonts.regular,
   },
   listContent: { paddingBottom: 24 },
   categoryCard: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.card,
     borderWidth: 1,
-    borderColor: '#e5e5e5',
-    borderRadius: 12,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     marginBottom: 14,
     overflow: 'hidden',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 1 },
+    ...cardShadow,
   },
   categoryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#f8f9fb',
+    backgroundColor: colors.surfaceContainerLow,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
-  categoryName: { fontSize: 16, fontWeight: '700', color: '#111' },
-  categoryEditHint: { fontSize: 12, color: '#2563eb', fontWeight: '600' },
-  noProducts: { fontSize: 13, color: '#999', fontStyle: 'italic', paddingVertical: 12, paddingHorizontal: 14 },
+  categoryName: { fontSize: 16, fontFamily: fonts.bold, color: colors.textPrimary },
+  categoryEditHint: { fontSize: 12, color: colors.primary, fontFamily: fonts.semiBold },
+  noProducts: {
+    fontSize: 13,
+    color: colors.textMuted,
+    fontStyle: 'italic',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    fontFamily: fonts.regular,
+  },
   productRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -139,10 +144,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#f2f2f2',
+    borderBottomColor: colors.border,
   },
-  productName: { fontSize: 14, color: '#222' },
-  productPrice: { fontSize: 14, color: '#555', fontWeight: '500' },
+  productName: { fontSize: 14, color: colors.textPrimary, fontFamily: fonts.regular },
+  productPrice: { fontSize: 14, color: colors.textSecondary, fontFamily: fonts.medium },
   addProductButton: { paddingVertical: 12, paddingHorizontal: 14 },
-  addProductButtonText: { color: '#2563eb', fontSize: 13, fontWeight: '600' },
+  addProductButtonText: { color: colors.primary, fontSize: 13, fontFamily: fonts.semiBold },
 });

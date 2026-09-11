@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { getModifierGroupsWithOptions, getProduct, type ModifierGroupRow, type ModifierOptionRow } from '@/src/db/queries/menu';
 import { useCartStore } from '@/src/store/cartStore';
+import { colors, fonts, radius } from '@/src/theme';
 
 type GroupWithOptions = ModifierGroupRow & { options: ModifierOptionRow[] };
 
@@ -172,33 +173,53 @@ export default function ProductDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1, padding: 16 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  title: { fontSize: 20, fontWeight: '600' },
-  basePrice: { fontSize: 15, color: '#555', marginBottom: 16 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  basePrice: { fontSize: 15, color: colors.textSecondary, marginBottom: 16, fontFamily: fonts.medium },
   groupBlock: { marginBottom: 16 },
-  groupName: { fontSize: 15, fontWeight: '600', marginBottom: 8 },
+  groupName: { fontSize: 15, fontFamily: fonts.semiBold, color: colors.textPrimary, marginBottom: 8 },
   optionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  optionChip: { borderWidth: 1, borderColor: '#ddd', borderRadius: 20, paddingVertical: 8, paddingHorizontal: 14 },
-  optionChipActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  optionChipText: { color: '#333' },
-  optionChipTextActive: { color: '#fff', fontWeight: '600' },
-  label: { fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 6 },
-  noteInput: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 10, fontSize: 14, marginBottom: 16 },
+  optionChip: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.full,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+  },
+  optionChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  optionChipText: { color: colors.textSecondary, fontFamily: fonts.regular },
+  optionChipTextActive: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  label: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textSecondary, marginBottom: 6 },
+  noteInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 10,
+    fontSize: 14,
+    marginBottom: 16,
+    backgroundColor: colors.card,
+  },
   qtyRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   qtyStepper: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   qtyButton: {
     width: 36,
     height: 36,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  qtyButtonText: { fontSize: 18, fontWeight: '600' },
-  qtyValue: { fontSize: 16, fontWeight: '600', minWidth: 24, textAlign: 'center' },
-  addButton: { backgroundColor: '#2563eb', padding: 16, borderRadius: 8, alignItems: 'center', marginBottom: 32 },
-  addButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  qtyButtonText: { fontSize: 18, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  qtyValue: { fontSize: 16, fontFamily: fonts.semiBold, color: colors.textPrimary, minWidth: 24, textAlign: 'center' },
+  addButton: {
+    backgroundColor: colors.primary,
+    padding: 16,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  addButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
 });

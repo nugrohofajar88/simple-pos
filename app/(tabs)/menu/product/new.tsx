@@ -7,6 +7,7 @@ import { createProduct } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
 import { getCategories, type CategoryRow } from '@/src/db/queries/menu';
+import { colors, fonts, radius } from '@/src/theme';
 
 export default function NewProductScreen() {
   const router = useRouter();
@@ -102,24 +103,31 @@ export default function NewProductScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, gap: 8 },
-  label: { fontSize: 14, fontWeight: '600', color: '#333', marginTop: 8 },
-  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16 },
+  container: { flex: 1, padding: 16, gap: 8, backgroundColor: colors.background },
+  label: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textSecondary, marginTop: 8 },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: colors.card,
+  },
   chipRow: { flexGrow: 0 },
   chipRowContent: { flexDirection: 'row', alignItems: 'center' },
   chip: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 20,
+    borderColor: colors.border,
+    borderRadius: radius.full,
     paddingVertical: 8,
     paddingHorizontal: 14,
     marginRight: 8,
     alignSelf: 'flex-start',
   },
-  chipActive: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  chipText: { color: '#333' },
-  chipTextActive: { color: '#fff', fontWeight: '600' },
-  emptyHint: { color: '#888', fontSize: 13, marginBottom: 4 },
-  saveButton: { backgroundColor: '#2563eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 16 },
-  saveButtonText: { color: '#fff', fontWeight: '600', fontSize: 16 },
+  chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  chipText: { color: colors.textSecondary, fontFamily: fonts.regular },
+  chipTextActive: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  emptyHint: { color: colors.textMuted, fontSize: 13, marginBottom: 4, fontFamily: fonts.regular },
+  saveButton: { backgroundColor: colors.primary, padding: 14, borderRadius: radius.sm, alignItems: 'center', marginTop: 16 },
+  saveButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold, fontSize: 16 },
 });

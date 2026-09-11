@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchOtherIncomes } from '@/src/api/reportApi';
 import { deleteOtherIncome, getOtherIncomes } from '@/src/db/queries/otherIncomes';
+import { colors, fonts, radius } from '@/src/theme';
 
 type DisplayOtherIncome = {
   key: string;
@@ -128,32 +129,33 @@ export default function OtherIncomesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: colors.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  title: { fontSize: 20, fontWeight: '600' },
-  addButton: { backgroundColor: '#2563eb', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8 },
-  addButtonText: { color: '#fff', fontWeight: '600' },
-  empty: { color: '#666', textAlign: 'center', marginTop: 24 },
+  title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
+  addButton: { backgroundColor: colors.primary, paddingVertical: 8, paddingHorizontal: 12, borderRadius: radius.sm },
+  addButtonText: { color: colors.onPrimary, fontFamily: fonts.semiBold },
+  empty: { color: colors.textSecondary, textAlign: 'center', marginTop: 24, fontFamily: fonts.regular },
   offlineNotice: {
     fontSize: 12,
-    color: '#92400e',
-    backgroundColor: '#fef3c7',
+    color: colors.warningText,
+    backgroundColor: colors.warningBg,
     padding: 8,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     marginBottom: 12,
+    fontFamily: fonts.regular,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
     gap: 8,
   },
   rowInfo: { flex: 1 },
-  rowDescription: { fontSize: 14, fontWeight: '600', color: '#222' },
-  pendingBadge: { fontSize: 11, fontWeight: '400', color: '#b45309' },
-  rowDate: { fontSize: 12, color: '#888', marginTop: 2 },
-  rowAmount: { fontSize: 14, color: '#333' },
-  deleteLink: { color: '#dc2626', fontSize: 13 },
+  rowDescription: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textPrimary },
+  pendingBadge: { fontSize: 11, fontFamily: fonts.regular, color: colors.secondary },
+  rowDate: { fontSize: 12, color: colors.textMuted, marginTop: 2, fontFamily: fonts.regular },
+  rowAmount: { fontSize: 14, color: colors.textSecondary, fontFamily: fonts.medium },
+  deleteLink: { color: colors.destructive, fontSize: 13, fontFamily: fonts.regular },
 });

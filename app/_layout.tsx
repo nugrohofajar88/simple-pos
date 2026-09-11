@@ -1,3 +1,10 @@
+import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  useFonts,
+} from '@expo-google-fonts/plus-jakarta-sans';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
@@ -9,9 +16,16 @@ import migrations from '@/src/db/migrations/migrations';
 import { seedIfEmpty } from '@/src/db/seed';
 import { useSeedStore } from '@/src/store/seedStore';
 import { SyncService } from '@/src/sync/SyncService';
+import { colors, fonts } from '@/src/theme';
 
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
+  const [fontsLoaded] = useFonts({
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+  });
 
   useEffect(() => {
     if (success && !useSeedStore.getState().hasSeeded) {
@@ -33,10 +47,10 @@ export default function RootLayout() {
     );
   }
 
-  if (!success) {
+  if (!success || !fontsLoaded) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -51,6 +65,6 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
-  errorText: { color: '#dc2626', textAlign: 'center' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16, backgroundColor: colors.background },
+  errorText: { color: colors.destructive, textAlign: 'center', fontFamily: fonts.regular },
 });
