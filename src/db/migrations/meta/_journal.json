@@ -57,6 +57,13 @@
       "when": 1789034416841,
       "tag": "0007_happy_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1789091130736,
+      "tag": "0008_silent_goblin_queen",
+      "breakpoints": true
     }
   ]
 }

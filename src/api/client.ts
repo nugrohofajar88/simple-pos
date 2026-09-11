@@ -15,12 +15,14 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
     throw new Error('URL API & token belum diatur di Pengaturan > Sinkronisasi.');
   }
 
+  const isFormData = options.body instanceof FormData;
+
   let response: Response;
   try {
     response = await fetch(`${apiBaseUrl.replace(/\/$/, '')}/api${path}`, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         Accept: 'application/json',
         Authorization: `Bearer ${apiToken}`,
         ...(options.headers ?? {}),

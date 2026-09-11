@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createProduct } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
+import { ProductImagePicker } from '@/src/components/ProductImagePicker';
 import { getCategories, type CategoryRow } from '@/src/db/queries/menu';
 import { colors, fonts, radius } from '@/src/theme';
 
@@ -20,6 +21,7 @@ export default function NewProductScreen() {
   const [name, setName] = useState('');
   const [basePrice, setBasePrice] = useState('');
   const [costPrice, setCostPrice] = useState('');
+  const [imageUri, setImageUri] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -51,7 +53,13 @@ export default function NewProductScreen() {
     }
     setSaving(true);
     try {
-      await createProduct({ categoryId, name: name.trim(), basePrice: price, costPrice: cost });
+      await createProduct({
+        categoryId,
+        name: name.trim(),
+        basePrice: price,
+        costPrice: cost,
+        imageUri,
+      });
       router.back();
     } catch (error) {
       Alert.alert('Gagal simpan', String(error));
@@ -85,6 +93,9 @@ export default function NewProductScreen() {
           ))}
         </ScrollView>
       )}
+
+      <Text style={styles.label}>Gambar</Text>
+      <ProductImagePicker uri={imageUri} onChange={setImageUri} />
 
       <Text style={styles.label}>Nama Produk</Text>
       <AppTextInput style={styles.input} value={name} onChangeText={setName} placeholder="mis. Cafe Latte" />

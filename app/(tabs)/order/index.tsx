@@ -4,6 +4,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchMenu } from '@/src/api/menuApi';
+import { ProductThumbnail } from '@/src/components/ProductThumbnail';
 import { getAllProducts, getCategories, type CategoryRow, type ProductRow } from '@/src/db/queries/menu';
 import { useCartStore } from '@/src/store/cartStore';
 import { colors, fonts, radius } from '@/src/theme';
@@ -64,6 +65,7 @@ export default function OrderScreen() {
                   style={styles.productCard}
                   onPress={() => router.push(`/order/product/${product.id}`)}
                 >
+                  <ProductThumbnail uri={product.imageUrl} size={64} />
                   <Text style={styles.productName}>{product.name}</Text>
                   <Text style={styles.productPrice}>Rp{product.basePrice.toLocaleString('id-ID')}</Text>
                 </Pressable>
@@ -103,6 +105,6 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: colors.card,
   },
-  productName: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textPrimary, marginBottom: 4 },
+  productName: { fontSize: 14, fontFamily: fonts.semiBold, color: colors.textPrimary, marginTop: 8, marginBottom: 4 },
   productPrice: { fontSize: 13, color: colors.textSecondary, fontFamily: fonts.regular },
 });

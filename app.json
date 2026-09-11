@@ -28,7 +28,14 @@
       "expo-status-bar",
       "expo-sqlite",
       "./plugins/withBluetoothPermissions.js",
-      "expo-font"
+      "expo-font",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Aplikasi butuh akses galeri untuk memilih gambar produk."
+        }
+      ]
     ],
     "extra": {
       "router": {},

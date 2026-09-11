@@ -28,32 +28,67 @@ export async function deleteCategory(id: number) {
   await fetchMenu();
 }
 
-export async function createProduct(input: { categoryId: number; name: string; basePrice: number; costPrice: number }) {
-  await apiFetch('/products', {
-    method: 'POST',
-    body: JSON.stringify({
-      category_id: input.categoryId,
-      name: input.name,
-      base_price: input.basePrice,
-      cost_price: input.costPrice,
-    }),
-  });
+function buildProductImageFile(imageUri: string) {
+  const fileName = imageUri.split('/').pop() ?? 'photo.jpg';
+  const ext = fileName.includes('.') ? fileName.split('.').pop()!.toLowerCase() : 'jpg';
+  return { uri: imageUri, name: fileName, type: `image/${ext === 'jpg' ? 'jpeg' : ext}` } as any;
+}
+
+export async function createProduct(input: {
+  categoryId: number;
+  name: string;
+  basePrice: number;
+  costPrice: number;
+  imageUri?: string | null;
+}) {
+  if (input.imageUri) {
+    const form = new FormData();
+    form.append('category_id', String(input.categoryId));
+    form.append('name', input.name);
+    form.append('base_price', String(input.basePrice));
+    form.append('cost_price', String(input.costPrice));
+    form.append('image', buildProductImageFile(input.imageUri));
+    await apiFetch('/products', { method: 'POST', body: form });
+  } else {
+    await apiFetch('/products', {
+      method: 'POST',
+      body: JSON.stringify({
+        category_id: input.categoryId,
+        name: input.name,
+        base_price: input.basePrice,
+        cost_price: input.costPrice,
+      }),
+    });
+  }
   await fetchMenu();
 }
 
 export async function updateProduct(
   id: number,
-  input: { name: string; basePrice: number; costPrice: number; categoryId: number }
+  input: { name: string; basePrice: number; costPrice: number; categoryId: number; imageUri?: string | null }
 ) {
-  await apiFetch(`/products/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-      category_id: input.categoryId,
-      name: input.name,
-      base_price: input.basePrice,
-      cost_price: input.costPrice,
-    }),
-  });
+  if (input.imageUri) {
+    // PHP gak parse body multipart/form-data utk method PUT/PATCH, jadi harus POST +
+    // field _method=PUT (Laravel method-spoofing) biar $request->file('image') keisi.
+    const form = new FormData();
+    form.append('_method', 'PUT');
+    form.append('category_id', String(input.categoryId));
+    form.append('name', input.name);
+    form.append('base_price', String(input.basePrice));
+    form.append('cost_price', String(input.costPrice));
+    form.append('image', buildProductImageFile(input.imageUri));
+    await apiFetch(`/products/${id}`, { method: 'POST', body: form });
+  } else {
+    await apiFetch(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        category_id: input.categoryId,
+        name: input.name,
+        base_price: input.basePrice,
+        cost_price: input.costPrice,
+      }),
+    });
+  }
   await fetchMenu();
 }
 

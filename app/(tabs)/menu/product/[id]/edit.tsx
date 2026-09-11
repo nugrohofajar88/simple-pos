@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { deleteProduct, updateProduct } from '@/src/api/menuApi';
 import { AppTextInput } from '@/src/components/AppTextInput';
 import { CurrencyInput } from '@/src/components/CurrencyInput';
+import { ProductImagePicker } from '@/src/components/ProductImagePicker';
 import { getCategories, getProduct, type CategoryRow } from '@/src/db/queries/menu';
 import { colors, fonts, radius, cardShadow } from '@/src/theme';
 
@@ -19,6 +20,8 @@ export default function EditProductScreen() {
   const [name, setName] = useState('');
   const [basePrice, setBasePrice] = useState('');
   const [costPrice, setCostPrice] = useState('');
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null);
   const [productFound, setProductFound] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -32,6 +35,7 @@ export default function EditProductScreen() {
         setName(product.name);
         setBasePrice(String(product.basePrice));
         setCostPrice(String(product.costPrice));
+        setExistingImageUrl(product.imageUrl);
       } else {
         setProductFound(false);
       }
@@ -60,7 +64,13 @@ export default function EditProductScreen() {
     }
     setSaving(true);
     try {
-      await updateProduct(productId, { categoryId, name: name.trim(), basePrice: price, costPrice: cost });
+      await updateProduct(productId, {
+        categoryId,
+        name: name.trim(),
+        basePrice: price,
+        costPrice: cost,
+        imageUri,
+      });
       router.back();
     } catch (error) {
       Alert.alert('Gagal simpan', String(error));
@@ -128,6 +138,9 @@ export default function EditProductScreen() {
               </Pressable>
             ))}
           </ScrollView>
+
+          <Text style={styles.label}>Gambar</Text>
+          <ProductImagePicker uri={imageUri ?? existingImageUrl} onChange={setImageUri} />
 
           <Text style={styles.label}>Nama Produk</Text>
           <AppTextInput style={styles.input} value={name} onChangeText={setName} />

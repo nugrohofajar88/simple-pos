@@ -19,6 +19,7 @@ export const products = sqliteTable('products', {
   name: text('name').notNull(),
   basePrice: real('base_price').notNull(),
   costPrice: real('cost_price').notNull().default(0),
+  imageUrl: text('image_url'),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
   sortOrder: integer('sort_order').notNull().default(0),
 });

@@ -4,6 +4,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchMenu } from '@/src/api/menuApi';
+import { ProductThumbnail } from '@/src/components/ProductThumbnail';
 import { getAllProducts, getCategories, type CategoryRow, type ProductRow } from '@/src/db/queries/menu';
 import { colors, fonts, radius, cardShadow } from '@/src/theme';
 
@@ -72,7 +73,10 @@ export default function MenuScreen() {
                   style={styles.productRow}
                   onPress={() => router.push(`/menu/product/${product.id}/edit`)}
                 >
-                  <Text style={styles.productName}>{product.name}</Text>
+                  <View style={styles.productInfo}>
+                    <ProductThumbnail uri={product.imageUrl} size={36} />
+                    <Text style={styles.productName}>{product.name}</Text>
+                  </View>
                   <Text style={styles.productPrice}>Rp{product.basePrice.toLocaleString('id-ID')}</Text>
                 </Pressable>
               ))
@@ -146,6 +150,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  productInfo: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
   productName: { fontSize: 14, color: colors.textPrimary, fontFamily: fonts.regular },
   productPrice: { fontSize: 14, color: colors.textSecondary, fontFamily: fonts.medium },
   addProductButton: { paddingVertical: 12, paddingHorizontal: 14 },
