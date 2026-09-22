@@ -20,6 +20,7 @@ export const products = sqliteTable('products', {
   basePrice: real('base_price').notNull(),
   costPrice: real('cost_price').notNull().default(0),
   imageUrl: text('image_url'),
+  recipeNote: text('recipe_note'),
   isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
   sortOrder: integer('sort_order').notNull().default(0),
 });

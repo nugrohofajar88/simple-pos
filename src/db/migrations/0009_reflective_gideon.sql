@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `recipe_note` text;

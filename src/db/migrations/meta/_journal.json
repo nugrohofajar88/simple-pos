@@ -64,6 +64,13 @@
       "when": 1789091130736,
       "tag": "0008_silent_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1790061681292,
+      "tag": "0009_reflective_gideon",
+      "breakpoints": true
     }
   ]
 }

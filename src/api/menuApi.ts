@@ -40,6 +40,7 @@ export async function createProduct(input: {
   basePrice: number;
   costPrice: number;
   imageUri?: string | null;
+  recipeNote?: string | null;
 }) {
   if (input.imageUri) {
     const form = new FormData();
@@ -47,6 +48,7 @@ export async function createProduct(input: {
     form.append('name', input.name);
     form.append('base_price', String(input.basePrice));
     form.append('cost_price', String(input.costPrice));
+    form.append('recipe_note', input.recipeNote ?? '');
     form.append('image', buildProductImageFile(input.imageUri));
     await apiFetch('/products', { method: 'POST', body: form });
   } else {
@@ -57,6 +59,7 @@ export async function createProduct(input: {
         name: input.name,
         base_price: input.basePrice,
         cost_price: input.costPrice,
+        recipe_note: input.recipeNote ?? null,
       }),
     });
   }
@@ -65,7 +68,14 @@ export async function createProduct(input: {
 
 export async function updateProduct(
   id: number,
-  input: { name: string; basePrice: number; costPrice: number; categoryId: number; imageUri?: string | null }
+  input: {
+    name: string;
+    basePrice: number;
+    costPrice: number;
+    categoryId: number;
+    imageUri?: string | null;
+    recipeNote?: string | null;
+  }
 ) {
   if (input.imageUri) {
     // PHP gak parse body multipart/form-data utk method PUT/PATCH, jadi harus POST +
@@ -76,6 +86,7 @@ export async function updateProduct(
     form.append('name', input.name);
     form.append('base_price', String(input.basePrice));
     form.append('cost_price', String(input.costPrice));
+    form.append('recipe_note', input.recipeNote ?? '');
     form.append('image', buildProductImageFile(input.imageUri));
     await apiFetch(`/products/${id}`, { method: 'POST', body: form });
   } else {
@@ -86,6 +97,7 @@ export async function updateProduct(
         name: input.name,
         base_price: input.basePrice,
         cost_price: input.costPrice,
+        recipe_note: input.recipeNote ?? null,
       }),
     });
   }

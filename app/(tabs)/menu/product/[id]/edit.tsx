@@ -22,6 +22,7 @@ export default function EditProductScreen() {
   const [costPrice, setCostPrice] = useState('');
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [recipeNote, setRecipeNote] = useState('');
   const [productFound, setProductFound] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,6 +37,7 @@ export default function EditProductScreen() {
         setBasePrice(String(product.basePrice));
         setCostPrice(String(product.costPrice));
         setExistingImageUrl(product.imageUrl);
+        setRecipeNote(product.recipeNote ?? '');
       } else {
         setProductFound(false);
       }
@@ -70,6 +72,7 @@ export default function EditProductScreen() {
         basePrice: price,
         costPrice: cost,
         imageUri,
+        recipeNote: recipeNote.trim() || null,
       });
       router.back();
     } catch (error) {
@@ -156,6 +159,15 @@ export default function EditProductScreen() {
             </View>
           </View>
 
+          <Text style={styles.label}>Resep / Cara Racik (opsional)</Text>
+          <AppTextInput
+            style={[styles.input, styles.recipeInput]}
+            value={recipeNote}
+            onChangeText={setRecipeNote}
+            placeholder="mis. 1 shot espresso, 150ml susu steam, gula aren 15ml..."
+            multiline
+          />
+
           <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
             <Text style={styles.saveButtonText}>{saving ? 'Menyimpan...' : 'Simpan Perubahan'}</Text>
           </Pressable>
@@ -200,6 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: colors.card,
   },
+  recipeInput: { minHeight: 90, textAlignVertical: 'top' },
   row: { flexDirection: 'row', gap: 10 },
   rowCol: { flex: 1 },
   chipRow: { flexGrow: 0 },

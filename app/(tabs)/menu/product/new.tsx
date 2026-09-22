@@ -22,6 +22,7 @@ export default function NewProductScreen() {
   const [basePrice, setBasePrice] = useState('');
   const [costPrice, setCostPrice] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [recipeNote, setRecipeNote] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function NewProductScreen() {
         basePrice: price,
         costPrice: cost,
         imageUri,
+        recipeNote: recipeNote.trim() || null,
       });
       router.back();
     } catch (error) {
@@ -106,6 +108,15 @@ export default function NewProductScreen() {
       <Text style={styles.label}>HPP / Harga Pokok (opsional)</Text>
       <CurrencyInput style={styles.input} value={costPrice} onChangeText={setCostPrice} placeholder="mis. 12.000" />
 
+      <Text style={styles.label}>Resep / Cara Racik (opsional)</Text>
+      <AppTextInput
+        style={[styles.input, styles.recipeInput]}
+        value={recipeNote}
+        onChangeText={setRecipeNote}
+        placeholder="mis. 1 shot espresso, 150ml susu steam, gula aren 15ml..."
+        multiline
+      />
+
       <Pressable style={styles.saveButton} onPress={handleSave} disabled={saving}>
         <Text style={styles.saveButtonText}>{saving ? 'Menyimpan...' : 'Simpan'}</Text>
       </Pressable>
@@ -124,6 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: colors.card,
   },
+  recipeInput: { minHeight: 90, textAlignVertical: 'top' },
   chipRow: { flexGrow: 0 },
   chipRowContent: { flexDirection: 'row', alignItems: 'center' },
   chip: {

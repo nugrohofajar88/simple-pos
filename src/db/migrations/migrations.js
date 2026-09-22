@@ -10,6 +10,7 @@ import m0005 from './0005_cheerful_komodo.sql';
 import m0006 from './0006_volatile_synch.sql';
 import m0007 from './0007_happy_magik.sql';
 import m0008 from './0008_silent_goblin_queen.sql';
+import m0009 from './0009_reflective_gideon.sql';
 
   export default {
     journal,
@@ -22,7 +23,8 @@ m0004,
 m0005,
 m0006,
 m0007,
-m0008
+m0008,
+m0009
     }
   }
   
