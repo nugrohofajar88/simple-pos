@@ -91,13 +91,25 @@ export default function ReportScreen() {
 
         <Pressable style={styles.expenseCard} onPress={() => router.push('/report/other-incomes')}>
           <View>
-            <Text style={styles.summaryLabel}>Pendapatan Lain</Text>
+            <Text style={styles.summaryLabel}>Pendapatan Lain (Total)</Text>
+            {summary.otherIncomeTotal !== undefined && (
+              <Text style={styles.summaryValue}>{formatRupiah(summary.otherIncomeTotal)}</Text>
+            )}
             <Text style={styles.capitalEditHint}>Lihat daftar</Text>
           </View>
           <Pressable style={styles.addExpenseButton} onPress={() => router.push('/report/other-income/new')}>
             <Text style={styles.addExpenseButtonText}>+ Pendapatan Lain</Text>
           </Pressable>
         </Pressable>
+
+        {summary.totalCash !== undefined && (
+          <View style={styles.expenseCard}>
+            <View>
+              <Text style={styles.summaryLabel}>Total Cash (Modal + Pendapatan Lain - Belanja)</Text>
+              <Text style={styles.summaryValue}>{formatRupiah(summary.totalCash)}</Text>
+            </View>
+          </View>
+        )}
 
         <View style={styles.chartCard}>
           <Text style={styles.chartTitle}>Omzet 7 Hari Terakhir</Text>

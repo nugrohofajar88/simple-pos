@@ -8,6 +8,8 @@ export async function fetchSummary(): Promise<RevenueSummary> {
     monthTotal: data.monthTotal,
     expenseMonthTotal: data.expenseMonthTotal,
     last7Days: data.last7Days as DailyRevenue[],
+    otherIncomeTotal: data.otherIncomeTotal,
+    totalCash: data.totalCash,
   };
 }
 

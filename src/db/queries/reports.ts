@@ -26,6 +26,9 @@ export type RevenueSummary = {
   monthTotal: number;
   expenseMonthTotal: number;
   last7Days: DailyRevenue[];
+  // Hanya ada kalau dari server (online) - hitungan lokal HP gak punya data gabungan ini.
+  otherIncomeTotal?: number;
+  totalCash?: number;
 };
 
 export async function getRevenueSummary(): Promise<RevenueSummary> {
