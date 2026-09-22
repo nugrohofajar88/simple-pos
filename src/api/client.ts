@@ -28,8 +28,12 @@ export async function apiFetch(path: string, options: RequestInit = {}): Promise
         ...(options.headers ?? {}),
       },
     });
-  } catch {
-    throw new Error('Gak ada koneksi ke server.');
+  } catch (error) {
+    // "Network request failed" React Native itu generik - bisa berarti beneran offline,
+    // TAPI juga bisa gagal baca file lokal (mis. gambar dari FormData sudah gak ada/gak
+    // kebaca). Sertakan pesan asli biar kelihatan bedanya, jangan ditutup jadi 1 kalimat.
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(`Gak ada koneksi ke server (${detail}).`);
   }
 
   if (!response.ok) {
