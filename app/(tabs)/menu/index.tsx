@@ -77,7 +77,14 @@ export default function MenuScreen() {
                     <ProductThumbnail uri={product.imageUrl} size={36} />
                     <Text style={styles.productName}>{product.name}</Text>
                   </View>
-                  <Text style={styles.productPrice}>Rp{product.basePrice.toLocaleString('id-ID')}</Text>
+                  <View style={styles.productPriceCol}>
+                    <Text style={styles.productPrice}>Rp{product.basePrice.toLocaleString('id-ID')}</Text>
+                    {product.costPrice > 0 && (
+                      <Text style={styles.productProfit}>
+                        Untung Rp{(product.basePrice - product.costPrice).toLocaleString('id-ID')}
+                      </Text>
+                    )}
+                  </View>
                 </Pressable>
               ))
             )}
@@ -152,7 +159,9 @@ const styles = StyleSheet.create({
   },
   productInfo: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
   productName: { fontSize: 14, color: colors.textPrimary, fontFamily: fonts.regular },
+  productPriceCol: { alignItems: 'flex-end' },
   productPrice: { fontSize: 14, color: colors.textSecondary, fontFamily: fonts.medium },
+  productProfit: { fontSize: 11, color: colors.textMuted, fontFamily: fonts.regular, marginTop: 1 },
   addProductButton: { paddingVertical: 12, paddingHorizontal: 14 },
   addProductButtonText: { color: colors.primary, fontSize: 13, fontFamily: fonts.semiBold },
 });
