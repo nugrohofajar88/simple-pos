@@ -19,7 +19,6 @@ export default function ProductDetailScreen() {
   const [productName, setProductName] = useState('');
   const [basePrice, setBasePrice] = useState(0);
   const [costPrice, setCostPrice] = useState(0);
-  const [recipeNote, setRecipeNote] = useState<string | null>(null);
   const [productFound, setProductFound] = useState(true);
   const [groups, setGroups] = useState<GroupWithOptions[]>([]);
   const [selected, setSelected] = useState<Record<number, Set<number>>>({});
@@ -37,7 +36,6 @@ export default function ProductDetailScreen() {
         setProductName(product.name);
         setBasePrice(product.basePrice);
         setCostPrice(product.costPrice);
-        setRecipeNote(product.recipeNote);
       } else {
         setProductFound(false);
       }
@@ -122,13 +120,6 @@ export default function ProductDetailScreen() {
         <Text style={styles.title}>{productName}</Text>
       <Text style={styles.basePrice}>Rp{basePrice.toLocaleString('id-ID')}</Text>
 
-      {recipeNote && recipeNote.trim() !== '' && (
-        <View style={styles.recipeCard}>
-          <Text style={styles.recipeTitle}>📋 Resep / Cara Racik</Text>
-          <Text style={styles.recipeText}>{recipeNote}</Text>
-        </View>
-      )}
-
       {groups.map((group) => (
         <View key={group.id} style={styles.groupBlock}>
           <Text style={styles.groupName}>
@@ -187,16 +178,6 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
   title: { fontSize: 20, fontFamily: fonts.bold, color: colors.textPrimary },
   basePrice: { fontSize: 15, color: colors.textSecondary, marginBottom: 16, fontFamily: fonts.medium },
-  recipeCard: {
-    backgroundColor: colors.surfaceContainerLow,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
-    padding: 12,
-    marginBottom: 16,
-  },
-  recipeTitle: { fontSize: 13, fontFamily: fonts.semiBold, color: colors.textPrimary, marginBottom: 4 },
-  recipeText: { fontSize: 14, fontFamily: fonts.regular, color: colors.textSecondary, lineHeight: 20 },
   groupBlock: { marginBottom: 16 },
   groupName: { fontSize: 15, fontFamily: fonts.semiBold, color: colors.textPrimary, marginBottom: 8 },
   optionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
